@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="character"
+            type="com.app.juawcevada.rickspace.model.Character" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp">
+
+        <ImageView
+            android:id="@+id/charImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:background="@color/colorAccent"
+            android:padding="2dp"
+            android:scaleType="centerCrop"
+            app:imageUrl="@{character.image}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/morty" />
+
+        <View
+            android:id="@+id/detailsBackground"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/bg_line_accent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/charImage"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/charName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginTop="8dp"
+            android:drawableStart="@drawable/ic_person"
+            android:text="@{character.name}"
+            android:textAppearance="@style/TextAppearance.List.Header"
+            app:layout_constraintEnd_toEndOf="@+id/detailsBackground"
+            app:layout_constraintStart_toEndOf="@+id/charImage"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Morty Smith" />
+
+
+        <TextView
+            android:id="@+id/charOrigin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:drawableStart="@drawable/ic_origin"
+            android:drawablePadding="4dp"
+            android:text="@{character.origin.name}"
+            android:textAppearance="@style/TextAppearance.List.Body"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="@+id/detailsBackground"
+            app:layout_constraintStart_toStartOf="@+id/charName"
+            app:layout_constraintTop_toBottomOf="@+id/charName"
+            tools:text="Earth (C-137)" />
+
+        <TextView
+            android:id="@+id/charLocation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="2dp"
+            android:drawableStart="@drawable/ic_location"
+            android:drawablePadding="4dp"
+            android:text="@{character.location.name}"
+            android:textAppearance="@style/TextAppearance.List.Body"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/charName"
+            app:layout_constraintEnd_toEndOf="@+id/detailsBackground"
+            tools:text="Earth (Replacement Dimension)" />
+
+
+        <TextView
+            android:id="@+id/charSpecies"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_line_accent_dark"
+            android:gravity="center"
+            android:text="@{character.species}"
+            android:textColor="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="@+id/charImage"
+            app:layout_constraintEnd_toEndOf="@+id/charImage"
+            app:layout_constraintStart_toStartOf="@+id/charImage"
+            tools:text="Human" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

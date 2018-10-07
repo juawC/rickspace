@@ -1,0 +1,14 @@
+<resources>
+
+    <style name="TextAppearance.List.Header" parent="@style/TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:fontFamily">sans-serif</item>
+
+    </style>
+
+    <style name="TextAppearance.List.Body" parent="@style/TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+</resources>

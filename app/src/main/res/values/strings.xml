@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Rick\'sSpace</string>
+    <string name="default_error_message">Oops unexpected error!</string>
+    <string name="episode_number">Episode %1$d</string>
+</resources>

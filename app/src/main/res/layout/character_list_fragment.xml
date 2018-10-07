@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="actions"
+            type="com.app.juawcevada.rickspace.ui.characterlist.CharacterListActions" />
+
+        <variable
+            name="viewModel"
+            type="com.app.juawcevada.rickspace.ui.characterlist.CharacterListViewModel" />
+    </data>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:onRefreshListener="@{() -> actions.refresh()}"
+        app:refreshing="@{viewModel.viewState.isRefreshing}">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:setCharactersList="@{viewModel.viewState.charactersList}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:context=".ui.characterlist.CharacterListFragment"
+            tools:listitem="@layout/character_item" />
+
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</layout>

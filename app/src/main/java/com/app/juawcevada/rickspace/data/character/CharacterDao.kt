@@ -22,7 +22,7 @@ interface CharacterDao {
     fun getCharacterById(id: Long): LiveData<Character>
 
     @Query("SELECT MAX(indexInResponse) + 1 FROM character")
-    fun getNextIndexCharacter() : Int
+    fun getNextIndexCharacter(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(characters: List<Character>)

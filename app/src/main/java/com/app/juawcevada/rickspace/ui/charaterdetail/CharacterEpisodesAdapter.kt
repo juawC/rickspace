@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import com.app.juawcevada.rickspace.R
 import com.app.juawcevada.rickspace.databinding.EpisodeItemBinding
-import com.app.juawcevada.rickspace.ui.ListRecyclerAdapter
+import com.app.juawcevada.rickspace.ui.shared.ListRecyclerAdapter
 
-class CharacterEpisodesAdapter: ListRecyclerAdapter<String,EpisodeItemBinding>() {
+class CharacterEpisodesAdapter : ListRecyclerAdapter<String, EpisodeItemBinding>() {
 
     override val differ: AsyncListDiffer<String> =
             AsyncListDiffer(this, EpisodeDiffCallback())

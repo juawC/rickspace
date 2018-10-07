@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.app.juawcevada.rickspace.event.Event
 import com.app.juawcevada.rickspace.event.EventObserver
-import com.app.juawcevada.rickspace.ui.SnackbarMessage
+import com.app.juawcevada.rickspace.ui.shared.SnackbarMessage
 import com.google.android.material.snackbar.Snackbar
 
 inline fun <reified VM : ViewModel> Fragment.viewModelProvider(

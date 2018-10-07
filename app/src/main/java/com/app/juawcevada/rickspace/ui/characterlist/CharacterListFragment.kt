@@ -5,17 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.app.juawcevada.rickspace.R
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.app.juawcevada.rickspace.R
 import com.app.juawcevada.rickspace.databinding.CharacterListFragmentBinding
 import com.app.juawcevada.rickspace.event.EventObserver
 import com.app.juawcevada.rickspace.extensions.checkExhaustion
 import com.app.juawcevada.rickspace.extensions.setUpSnackbar
 import com.app.juawcevada.rickspace.extensions.viewModelProvider
-
-import com.app.juawcevada.rickspace.ui.FragmentDataBindingComponent
-import com.app.juawcevada.rickspace.ui.VerticalSpaceItemDecoration
+import com.app.juawcevada.rickspace.ui.shared.FragmentDataBindingComponent
+import com.app.juawcevada.rickspace.ui.shared.VerticalSpaceItemDecoration
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -51,6 +50,7 @@ class CharacterListFragment : Fragment() {
                                 VerticalSpaceItemDecoration(
                                         this.context,
                                         R.dimen.character_list_divider_height,
+                                        true,
                                         true))
                     }
                 }

@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class GetCharacterUseCase @Inject constructor(
         private val repository: CharacterRepository
-) : UseCase<Long, LiveData<Character>>(){
+) : UseCase<Long, LiveData<Character>>() {
 
     override fun execute(parameters: Long): LiveData<Character> {
         return repository.getCharacterData(parameters)

@@ -1,7 +1,7 @@
 package com.app.juawcevada.rickspace.di
 
-import com.app.juawcevada.rickspace.di.annotation.ApiConfig
 import com.app.juawcevada.rickspace.data.shared.remote.RickAndMortyService
+import com.app.juawcevada.rickspace.di.annotation.ApiConfig
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -9,7 +9,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
-
 
 
 /**

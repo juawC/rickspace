@@ -16,7 +16,7 @@ class CharacterDetailViewModel @Inject constructor(
         getCharacterUseCase(it)
     }
 
-    val viewState =  MediatorLiveData<CharacterDetailViewState>().apply {
+    val viewState = MediatorLiveData<CharacterDetailViewState>().apply {
         value = CharacterDetailViewState()
     }
 
@@ -26,8 +26,8 @@ class CharacterDetailViewModel @Inject constructor(
         }
     }
 
-   fun setCharacterId(id: Long) {
-       characterId.setValueIfNew(id)
-   }
+    fun setCharacterId(id: Long) {
+        characterId.setValueIfNew(id)
+    }
 
 }

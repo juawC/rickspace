@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import com.app.juawcevada.rickspace.R
 import com.app.juawcevada.rickspace.databinding.CharacterItemBinding
 import com.app.juawcevada.rickspace.model.Character
-import com.app.juawcevada.rickspace.ui.PagedRecyclerAdapter
+import com.app.juawcevada.rickspace.ui.shared.PagedRecyclerAdapter
 
 
 class CharacterListAdapter(

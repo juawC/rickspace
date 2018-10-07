@@ -7,7 +7,7 @@ import com.app.juawcevada.rickspace.data.shared.repository.ResourceSuccess
 import ru.gildor.coroutines.retrofit.Result
 
 fun <T : Any> Result<T>.doOnSuccess(onSuccess: (T) -> Unit = {}) {
-     when (this) {
+    when (this) {
         is Result.Ok -> {
             try {
                 onSuccess(value)
@@ -18,7 +18,7 @@ fun <T : Any> Result<T>.doOnSuccess(onSuccess: (T) -> Unit = {}) {
     }
 }
 
-fun <T : Any> Result<T>.toResource(): Resource<T>{
+fun <T : Any> Result<T>.toResource(): Resource<T> {
     return when (this) {
         is Result.Ok -> {
             try {

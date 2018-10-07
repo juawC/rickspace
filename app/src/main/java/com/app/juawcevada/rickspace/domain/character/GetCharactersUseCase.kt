@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class GetCharactersUseCase @Inject constructor(
         private val repository: CharacterRepository
-) : UseCase<Unit, Listing<Character>>(){
+) : UseCase<Unit, Listing<Character>>() {
 
     override fun execute(parameters: Unit): Listing<Character> {
         return repository.getCharactersData(parentJob)

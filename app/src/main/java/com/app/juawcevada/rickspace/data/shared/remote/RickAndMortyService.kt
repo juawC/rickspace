@@ -1,10 +1,10 @@
 package com.app.juawcevada.rickspace.data.shared.remote
 
 import com.app.juawcevada.rickspace.data.character.CharacterListInfo
+import com.app.juawcevada.rickspace.model.Character
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
-import com.app.juawcevada.rickspace.model.Character
 import retrofit2.http.Query
 
 

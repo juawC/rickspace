@@ -1,4 +1,4 @@
-package com.app.juawcevada.rickspace.ui
+package com.app.juawcevada.rickspace.ui.shared
 
 import android.content.Context
 import android.graphics.Rect
@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 class VerticalSpaceItemDecoration(
         private val context: Context,
         @DimenRes private val height: Int,
-        private val includeTop: Boolean = false
+        private val includeTop: Boolean = false,
+        private val includeBottom: Boolean = false
 ) : RecyclerView.ItemDecoration() {
 
     private val heightPx: Int by lazy {
@@ -21,6 +22,10 @@ class VerticalSpaceItemDecoration(
 
         if (parent.getChildAdapterPosition(view) == 0 && !includeTop) {
             return
+        }
+
+        if (parent.getChildAdapterPosition(view) == state.itemCount - 1 && includeBottom) {
+            outRect.bottom = heightPx
         }
 
         outRect.top = heightPx

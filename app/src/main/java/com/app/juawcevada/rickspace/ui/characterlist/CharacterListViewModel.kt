@@ -14,7 +14,7 @@ import com.app.juawcevada.rickspace.domain.character.RefreshCharactersUseCase
 import com.app.juawcevada.rickspace.domain.shared.invoke
 import com.app.juawcevada.rickspace.event.Event
 import com.app.juawcevada.rickspace.model.Character
-import com.app.juawcevada.rickspace.ui.SnackbarMessage
+import com.app.juawcevada.rickspace.ui.shared.SnackbarMessage
 import javax.inject.Inject
 
 class CharacterListViewModel @Inject constructor(

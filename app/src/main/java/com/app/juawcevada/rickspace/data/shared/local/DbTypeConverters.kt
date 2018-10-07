@@ -8,5 +8,5 @@ class DbTypeConverters {
     fun fromStringList(list: List<String>?): String? = list?.joinToString()
 
     @TypeConverter
-    fun toStringList(list: String?): List<String>? = list?.split(",")?.map{it.trim()}
+    fun toStringList(list: String?): List<String>? = list?.split(",")?.map { it.trim() }
 }

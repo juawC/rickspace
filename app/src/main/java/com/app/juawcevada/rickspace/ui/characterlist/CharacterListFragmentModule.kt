@@ -5,7 +5,7 @@ import dagger.Binds
 import dagger.Module
 
 @Module
-abstract class  CharacterListFragmentModule {
+abstract class CharacterListFragmentModule {
 
     @Binds
     internal abstract fun bindFragment(fragment: CharacterListFragment): Fragment

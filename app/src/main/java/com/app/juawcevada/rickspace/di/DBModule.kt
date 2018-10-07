@@ -2,8 +2,8 @@ package com.app.juawcevada.rickspace.di
 
 import android.content.Context
 import androidx.room.Room
-import com.app.juawcevada.rickspace.data.shared.local.AppDatabase
 import com.app.juawcevada.rickspace.data.character.CharacterDao
+import com.app.juawcevada.rickspace.data.shared.local.AppDatabase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

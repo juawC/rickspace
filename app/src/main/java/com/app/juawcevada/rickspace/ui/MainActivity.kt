@@ -1,7 +1,7 @@
 package com.app.juawcevada.rickspace.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.app.juawcevada.rickspace.R

@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class RefreshCharactersUseCase @Inject constructor(
         private val repository: CharacterRepository
-) : UseCase<Unit, LiveData<Resource<Unit>>>(){
+) : UseCase<Unit, LiveData<Resource<Unit>>>() {
 
     override fun execute(parameters: Unit): LiveData<Resource<Unit>> {
         return repository.refreshCharactersData(parentJob)

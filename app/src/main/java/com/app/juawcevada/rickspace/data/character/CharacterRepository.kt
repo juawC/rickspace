@@ -13,7 +13,6 @@ import kotlinx.coroutines.experimental.launch
 import ru.gildor.coroutines.retrofit.Result
 import ru.gildor.coroutines.retrofit.awaitResult
 import timber.log.Timber
-import java.lang.Exception
 
 class CharacterRepository(
         private val appDatabase: AppDatabase,

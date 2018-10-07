@@ -1,4 +1,4 @@
-package com.app.juawcevada.rickspace.ui
+package com.app.juawcevada.rickspace.ui.shared
 
 import android.content.Context
 import com.bumptech.glide.GlideBuilder

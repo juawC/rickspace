@@ -5,14 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 
-import com.app.juawcevada.rickspace.R
 import com.app.juawcevada.rickspace.databinding.CharacterDetailFragmentBinding
 import com.app.juawcevada.rickspace.extensions.viewModelProvider
-import com.app.juawcevada.rickspace.ui.FragmentDataBindingComponent
+import com.app.juawcevada.rickspace.ui.shared.FragmentDataBindingComponent
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 

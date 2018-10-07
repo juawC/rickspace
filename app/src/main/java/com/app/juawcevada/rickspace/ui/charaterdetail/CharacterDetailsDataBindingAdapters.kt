@@ -1,9 +1,9 @@
 package com.app.juawcevada.rickspace.ui.charaterdetail
 
-import com.app.juawcevada.rickspace.R
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.app.juawcevada.rickspace.R
 
 @BindingAdapter("setEpisodesList")
 fun setEpisodesList(recyclerView: RecyclerView, episodes: List<String>) {

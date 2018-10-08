@@ -30,7 +30,7 @@ abstract class PagedRecyclerAdapter<DataType, BindingType : ViewDataBinding>(
         }
     }
 
-    protected abstract fun bind(binding: BindingType, item: DataType)
+    protected abstract fun bind(binding: BindingType, item: DataType?)
 
     protected abstract fun createBinding(parent: ViewGroup): BindingType
 

@@ -3,6 +3,7 @@ package com.app.juawcevada.rickspace.data.character
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.app.juawcevada.rickspace.data.shared.local.AppDatabase
 import com.app.juawcevada.rickspace.data.shared.remote.RickAndMortyService
 import com.app.juawcevada.rickspace.data.shared.repository.*
@@ -105,10 +106,17 @@ class CharacterRepository(
     fun getCharactersData(job: Job): Listing<Character> {
         Timber.d("Loading characters...")
 
+        val pagingConfig =
+                PagedList
+                        .Config.Builder()
+                        .setPageSize(itemsByPage)
+                        .setPrefetchDistance(itemsByPage)
+                        .setEnablePlaceholders(true)
+                        .build()
         val boundaryCallback = CharacterBoundaryCallback(job, this)
         val dataSourceFactory = appDatabase.characterDao().getAllCharacters()
         val pagingBuilder =
-                LivePagedListBuilder(dataSourceFactory, itemsByPage)
+                LivePagedListBuilder(dataSourceFactory, pagingConfig)
                         .setBoundaryCallback(boundaryCallback)
 
         return Listing(pagingBuilder.build(), boundaryCallback.networkState)

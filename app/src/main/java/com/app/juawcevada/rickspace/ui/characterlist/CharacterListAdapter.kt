@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.DiffUtil
 import com.app.juawcevada.rickspace.R
 import com.app.juawcevada.rickspace.databinding.CharacterItemBinding
 import com.app.juawcevada.rickspace.model.Character
+import com.app.juawcevada.rickspace.model.Location
+import com.app.juawcevada.rickspace.model.Origin
 import com.app.juawcevada.rickspace.ui.shared.PagedRecyclerAdapter
 
 
@@ -22,8 +24,8 @@ class CharacterListAdapter(
         onCharacterSelected(character)
     }
 
-    override fun bind(binding: CharacterItemBinding, item: Character) {
-        binding.character = item
+    override fun bind(binding: CharacterItemBinding, item: Character?) {
+        binding.character = item ?: createCharacterPlaceHolder()
         binding.root.apply {
             tag = item
             setOnClickListener(onClickListener)
@@ -44,5 +46,20 @@ class CharacterListAdapter(
     class CharacterDiff : DiffUtil.ItemCallback<Character>() {
         override fun areItemsTheSame(old: Character, new: Character) = old.id == new.id
         override fun areContentsTheSame(old: Character, new: Character) = old == new
+    }
+
+    companion object {
+        fun createCharacterPlaceHolder() =
+                Character(0,
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        Origin("", ""),
+                        Location("", ""),
+                        "",
+                        emptyList(),
+                        "")
     }
 }

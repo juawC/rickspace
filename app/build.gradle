@@ -84,6 +84,8 @@ dependencies {
 
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
+    implementation 'com.github.ybq:Android-SpinKit:1.1.0'
+
     implementation 'ru.gildor.coroutines:kotlin-coroutines-retrofit:0.12.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'

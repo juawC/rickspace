@@ -41,7 +41,7 @@ class CharacterListFragment : Fragment() {
                 CharacterListFragmentBinding.inflate(inflater, container, false).also {
                     it.setLifecycleOwner(this)
                     it.viewModel = viewModel
-                    it.actions = viewModel
+                    it.viewActions = viewModel
                     it.list.apply {
                         adapter = CharacterListAdapter(fragmentDataBindingComponent) { character ->
                             viewModel.openCharacter(character.id)

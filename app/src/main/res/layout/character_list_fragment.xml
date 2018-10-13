@@ -1,34 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
-            name="actions"
-            type="com.app.juawcevada.rickspace.ui.characterlist.CharacterListActions" />
+            name="viewActions"
+            type="com.app.juawcevada.rickspace.ui.characterlist.CharacterListViewActions" />
 
         <variable
             name="viewModel"
             type="com.app.juawcevada.rickspace.ui.characterlist.CharacterListViewModel" />
     </data>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:onRefreshListener="@{() -> actions.refresh()}"
-        app:refreshing="@{viewModel.viewState.isRefreshing}">
+        android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:setCharactersList="@{viewModel.viewState.charactersList}"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:context=".ui.characterlist.CharacterListFragment"
-            tools:listitem="@layout/character_item" />
+            app:onRefreshListener="@{() -> viewActions.refresh()}"
+            app:refreshing="@{viewModel.viewState.isRefreshing}">
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:setCharactersList="@{viewModel.viewState.charactersList}"
+                tools:context=".ui.characterlist.CharacterListFragment"
+                tools:listitem="@layout/character_item" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <include
+            layout="@layout/lce_state"
+            bind:viewActions="@{viewActions}"
+            bind:viewState="@{viewModel.viewState}"
+            tools:visibility="gone" />
+    </FrameLayout>
+
 </layout>

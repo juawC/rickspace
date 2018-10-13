@@ -20,10 +20,12 @@ import javax.inject.Inject
 class CharacterListViewModel @Inject constructor(
         private val getCharactersUseCase: GetCharactersUseCase,
         private val refreshCharactersUseCase: RefreshCharactersUseCase
-) : ViewModel(), CharacterListActions {
+) : ViewModel(), CharacterListViewActions {
 
-    private val characterList: LiveData<PagedList<Character>>
-    private val networkState: LiveData<Resource<Unit>>
+    private val characterListing = getCharactersUseCase()
+
+    private val characterList: LiveData<PagedList<Character>> = characterListing.pagedList
+    private val networkState: LiveData<Resource<Unit>> = characterListing.networkState
 
     private val refreshNetworkState = MediatorLiveData<Resource<Unit>>()
 
@@ -41,11 +43,8 @@ class CharacterListViewModel @Inject constructor(
     val navigationAction: LiveData<Event<CharacterListNavigationActions>>
         get() = _navigationAction
 
-    init {
-        val listing = getCharactersUseCase()
-        characterList = listing.pagedList
-        networkState = listing.networkState
 
+    init {
         _viewState.addSource(characterList) { characterList ->
             _viewState.value?.run {
                 // TODO fix this
@@ -56,8 +55,12 @@ class CharacterListViewModel @Inject constructor(
         _viewState.addSource(networkState) { stateResource ->
             _viewState.value?.run {
                 val isLoading = charactersList?.isEmpty() ?: true && stateResource is ResourceLoading
-                val errorMessage = (stateResource as? ResourceError)?.error?.toString()
-
+                val errorMessage =
+                        if (stateResource is ResourceError) {
+                            stateResource.error?.toString() ?: ""
+                        } else {
+                            null
+                        }
                 _viewState.value = copy(isLoading = isLoading, errorMessage = errorMessage)
             }
         }
@@ -84,6 +87,10 @@ class CharacterListViewModel @Inject constructor(
 
     override fun openCharacter(id: Long) {
         _navigationAction.postValue(Event(CharacterListNavigationActions.OpenCharacterDetail(id)))
+    }
+
+    override fun retry() {
+        characterListing.retryAction()
     }
 
     override fun refresh() {

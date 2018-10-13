@@ -119,7 +119,10 @@ class CharacterRepository(
                 LivePagedListBuilder(dataSourceFactory, pagingConfig)
                         .setBoundaryCallback(boundaryCallback)
 
-        return Listing(pagingBuilder.build(), boundaryCallback.networkState)
+        return Listing(
+                pagingBuilder.build(),
+                boundaryCallback.networkState,
+                boundaryCallback.retryAction)
     }
 
     fun getCharacterData(id: Long): LiveData<Character> =

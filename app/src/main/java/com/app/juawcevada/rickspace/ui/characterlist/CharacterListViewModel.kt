@@ -15,6 +15,7 @@ import com.app.juawcevada.rickspace.domain.shared.invoke
 import com.app.juawcevada.rickspace.event.Event
 import com.app.juawcevada.rickspace.model.Character
 import com.app.juawcevada.rickspace.ui.shared.SnackbarMessage
+import com.app.juawcevada.rickspace.ui.shared.ViewStateLiveData
 import javax.inject.Inject
 
 class CharacterListViewModel @Inject constructor(
@@ -29,9 +30,7 @@ class CharacterListViewModel @Inject constructor(
 
     private val refreshNetworkState = MediatorLiveData<Resource<Unit>>()
 
-    private val _viewState = MediatorLiveData<CharacterListViewState>().apply {
-        value = CharacterListViewState()
-    }
+    private val _viewState = ViewStateLiveData(CharacterListViewState())
     val viewState: LiveData<CharacterListViewState>
         get() = _viewState
 
@@ -45,30 +44,23 @@ class CharacterListViewModel @Inject constructor(
 
 
     init {
-        _viewState.addSource(characterList) { characterList ->
-            _viewState.value?.run {
-                // TODO fix this
-                _viewState.value = copy(charactersList = characterList)
-            }
+        _viewState.addNewStateSource(characterList) {
+            copy(charactersList = it)
         }
 
-        _viewState.addSource(networkState) { stateResource ->
-            _viewState.value?.run {
-                val isLoading = charactersList?.isEmpty() ?: true && stateResource is ResourceLoading
-                val errorMessage =
-                        if (stateResource is ResourceError) {
-                            stateResource.error?.toString() ?: ""
-                        } else {
-                            null
-                        }
-                _viewState.value = copy(isLoading = isLoading, errorMessage = errorMessage)
-            }
+        _viewState.addNewStateSource(networkState) {
+            val isLoading = charactersList?.isEmpty() ?: true && it is ResourceLoading
+            val errorMessage =
+                    if (it is ResourceError && charactersList?.isEmpty() != false) {
+                        it.error?.toString() ?: ""
+                    } else {
+                        null
+                    }
+            copy(isLoading = isLoading, errorMessage = errorMessage)
         }
 
-        _viewState.addSource(refreshNetworkState) { refreshResource ->
-            _viewState.value?.run {
-                _viewState.value = copy(isRefreshing = refreshResource is ResourceLoading)
-            }
+        _viewState.addNewStateSource(refreshNetworkState) {
+                copy(isRefreshing = it is ResourceLoading)
         }
 
         _errorMessage.addSource(networkState) { stateResource ->

@@ -86,12 +86,16 @@ class CharacterListViewModel @Inject constructor(
     }
 
     override fun refresh() {
-        if (refreshNetworkState.value is ResourceLoading) return
+        if (refreshNetworkState.value is ResourceLoading) {
+            return
+        } else {
+            refreshNetworkState.value = ResourceLoading()
+        }
 
         refreshCharactersUseCase().also { refreshLiveData ->
             with(refreshNetworkState) {
                 addSource(refreshLiveData) {
-                    postValue(it)
+                    value = it
                     if (it is ResourceSuccess || it is ResourceError) {
                         removeSource(refreshLiveData)
                     }

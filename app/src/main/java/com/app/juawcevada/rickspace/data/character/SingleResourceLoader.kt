@@ -18,11 +18,15 @@ class SingleResourceLoader {
 
     fun loadData(action: () -> LiveData<Resource<Unit>>) {
         // Avoid concurrent network calls
-        if (currentLoadAction.value?.state is ResourceLoading) return
+        if (currentLoadAction.value?.state is ResourceLoading) {
+            return
+        } else {
+            currentLoadAction.value = LoadAction(action = action)
+        }
 
         action().let { responseState ->
             currentLoadAction.addSource(action()) {
-                currentLoadAction.postValue(LoadAction(it, action))
+                currentLoadAction.value = LoadAction(it, action)
 
                 if (it is ResourceSuccess || it is ResourceError) {
                     currentLoadAction.removeSource(responseState)

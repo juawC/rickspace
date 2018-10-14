@@ -1,5 +1,6 @@
 package com.app.juawcevada.rickspace.ui.characterlist
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,14 +29,22 @@ class CharacterListFragment : Fragment() {
 
     private lateinit var viewModel: CharacterListViewModel
 
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        AndroidSupportInjection.inject(this)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel = viewModelProvider(viewModelFactory)
+    }
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        AndroidSupportInjection.inject(this)
-
-        viewModel = viewModelProvider(viewModelFactory)
 
         val binding: CharacterListFragmentBinding =
                 CharacterListFragmentBinding.inflate(inflater, container, false).also {
@@ -70,5 +79,11 @@ class CharacterListFragment : Fragment() {
         setUpSnackbar(viewModel.errorMessage, binding.root)
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.errorMessage.removeObservers(this)
+        viewModel.navigationAction.removeObservers(this)
     }
 }

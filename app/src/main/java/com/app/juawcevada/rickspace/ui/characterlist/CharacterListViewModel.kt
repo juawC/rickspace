@@ -2,7 +2,6 @@ package com.app.juawcevada.rickspace.ui.characterlist
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import com.app.juawcevada.rickspace.R
 import com.app.juawcevada.rickspace.data.shared.repository.Resource
@@ -11,9 +10,10 @@ import com.app.juawcevada.rickspace.data.shared.repository.ResourceLoading
 import com.app.juawcevada.rickspace.data.shared.repository.ResourceSuccess
 import com.app.juawcevada.rickspace.domain.character.GetCharactersUseCase
 import com.app.juawcevada.rickspace.domain.character.RefreshCharactersUseCase
-import com.app.juawcevada.rickspace.domain.shared.invoke
+import com.app.juawcevada.rickspace.domain.shared.runInScope
 import com.app.juawcevada.rickspace.event.Event
 import com.app.juawcevada.rickspace.model.Character
+import com.app.juawcevada.rickspace.ui.shared.ScopedViewModel
 import com.app.juawcevada.rickspace.ui.shared.SnackbarMessage
 import com.app.juawcevada.rickspace.ui.shared.ViewStateLiveData
 import javax.inject.Inject
@@ -21,9 +21,10 @@ import javax.inject.Inject
 class CharacterListViewModel @Inject constructor(
         private val getCharactersUseCase: GetCharactersUseCase,
         private val refreshCharactersUseCase: RefreshCharactersUseCase
-) : ViewModel(), CharacterListViewActions {
+) : ScopedViewModel(), CharacterListViewActions {
 
-    private val characterListing = getCharactersUseCase()
+
+    private val characterListing = runInScope { getCharactersUseCase(Unit) }
 
     private val characterList: LiveData<PagedList<Character>> = characterListing.pagedList
     private val networkState: LiveData<Resource<Unit>> = characterListing.networkState
@@ -60,7 +61,7 @@ class CharacterListViewModel @Inject constructor(
         }
 
         _viewState.addNewStateSource(refreshNetworkState) {
-                copy(isRefreshing = it is ResourceLoading)
+            copy(isRefreshing = it is ResourceLoading)
         }
 
         _errorMessage.addSource(networkState) { stateResource ->
@@ -92,7 +93,7 @@ class CharacterListViewModel @Inject constructor(
             refreshNetworkState.value = ResourceLoading()
         }
 
-        refreshCharactersUseCase().also { refreshLiveData ->
+        runInScope { refreshCharactersUseCase(Unit) }.also { refreshLiveData ->
             with(refreshNetworkState) {
                 addSource(refreshLiveData) {
                     value = it
@@ -102,11 +103,5 @@ class CharacterListViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        getCharactersUseCase.cancel()
-        refreshCharactersUseCase.cancel()
     }
 }

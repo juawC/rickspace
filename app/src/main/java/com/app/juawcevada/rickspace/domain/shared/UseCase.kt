@@ -1,22 +1,12 @@
 package com.app.juawcevada.rickspace.domain.shared
+import kotlinx.coroutines.CoroutineScope
 
-import kotlinx.coroutines.experimental.Job
 
 abstract class UseCase<in P, R> {
 
-    protected var parentJob: Job = Job()
+    operator fun invoke(parameters: P): CoroutineScope.()-> R = {execute(this, parameters)}
 
-    operator fun invoke(parameters: P): R {
-        return execute(parameters)
-    }
-
-    protected abstract fun execute(parameters: P): R
-
-    fun cancel() {
-        parentJob.cancel()
-    }
-
-    fun isRunning() = parentJob.isActive
+    protected abstract fun execute(coroutineScope: CoroutineScope, parameters: P): R
 }
 
-operator fun <R> UseCase<Unit, R>.invoke(): R = this(Unit)
+fun <R> CoroutineScope.runInScope(body: ()-> (CoroutineScope.()-> R)): R = body()()

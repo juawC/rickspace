@@ -8,9 +8,7 @@ import com.app.juawcevada.rickspace.data.shared.local.AppDatabase
 import com.app.juawcevada.rickspace.data.shared.remote.RickAndMortyService
 import com.app.juawcevada.rickspace.data.shared.repository.*
 import com.app.juawcevada.rickspace.model.Character
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.*
 import ru.gildor.coroutines.retrofit.Result
 import ru.gildor.coroutines.retrofit.awaitResult
 import timber.log.Timber
@@ -38,14 +36,14 @@ class CharacterRepository(
         }
     }
 
-    fun loadCharactersNextPage(job: Job, lastCharacter: Character): LiveData<Resource<Unit>> {
+    fun loadCharactersNextPage(coroutineScope: CoroutineScope, lastCharacter: Character): LiveData<Resource<Unit>> {
         val networkState = MutableLiveData<Resource<Unit>>()
         if (!lastCharacter.hasNextPage()) {
             networkState.postValue(ResourceSuccess())
         } else {
             networkState.postValue(ResourceLoading())
 
-            launch(CommonPool + job) {
+            coroutineScope.launch(Dispatchers.Default) {
                 val result: Result<CharacterListInfo> =
                         apiService.getCharactersByPage(lastCharacter.nextPage).awaitResult().apply {
                             doOnSuccess {
@@ -66,11 +64,11 @@ class CharacterRepository(
         return networkState
     }
 
-    fun loadCharactersFirstPage(job: Job): LiveData<Resource<Unit>> {
+    fun loadCharactersFirstPage(coroutineScope: CoroutineScope): LiveData<Resource<Unit>> {
         val networkState = MutableLiveData<Resource<Unit>>()
         networkState.postValue(ResourceLoading())
 
-        launch(CommonPool + job) {
+        coroutineScope.launch(Dispatchers.Default) {
             val result: Result<CharacterListInfo> = apiService.getCharacters().awaitResult().apply {
                 doOnSuccess {
                     insertResultDb(it)
@@ -82,12 +80,12 @@ class CharacterRepository(
         return networkState
     }
 
-    fun refreshCharactersData(job: Job): LiveData<Resource<Unit>> {
+    fun refreshCharactersData(coroutineScope: CoroutineScope): LiveData<Resource<Unit>> {
         Timber.d("Refreshing characters...")
         val networkState = MutableLiveData<Resource<Unit>>()
         networkState.postValue(ResourceLoading())
 
-        launch(CommonPool + job) {
+        coroutineScope.launch(Dispatchers.Default) {
             val result: Result<CharacterListInfo> =
                     apiService.getCharacters().awaitResult().apply {
                         doOnSuccess {
@@ -103,7 +101,7 @@ class CharacterRepository(
         return networkState
     }
 
-    fun getCharactersData(job: Job): Listing<Character> {
+    fun getCharactersData(coroutineScope: CoroutineScope): Listing<Character> {
         Timber.d("Loading characters...")
 
         val pagingConfig =
@@ -113,7 +111,7 @@ class CharacterRepository(
                         .setPrefetchDistance(itemsByPage)
                         .setEnablePlaceholders(true)
                         .build()
-        val boundaryCallback = CharacterBoundaryCallback(job, this)
+        val boundaryCallback = CharacterBoundaryCallback(coroutineScope, this)
         val dataSourceFactory = appDatabase.characterDao().getAllCharacters()
         val pagingBuilder =
                 LivePagedListBuilder(dataSourceFactory, pagingConfig)

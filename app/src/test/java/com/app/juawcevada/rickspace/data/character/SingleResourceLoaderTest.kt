@@ -8,14 +8,14 @@ import com.app.juawcevada.rickspace.data.shared.repository.ResourceLoading
 import com.app.juawcevada.rickspace.data.shared.repository.ResourceSuccess
 import com.app.juawcevada.rickspace.util.getValueTest
 import com.app.juawcevada.rickspace.util.observeTest
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
-class SingleResourceLoaderTest{
+class SingleResourceLoaderTest {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()

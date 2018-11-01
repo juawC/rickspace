@@ -12,6 +12,6 @@ class TestDataSource(
     }
 
     override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<Character>) {
-       callback.onResult(charList, 0, charList.size)
+        callback.onResult(charList, 0, charList.size)
     }
 }

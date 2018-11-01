@@ -4,7 +4,8 @@ import com.app.juawcevada.rickspace.model.Character
 import com.app.juawcevada.rickspace.model.Location
 import com.app.juawcevada.rickspace.model.Origin
 
-@CharacterDsl class CharacterBuilder {
+@CharacterDsl
+class CharacterBuilder {
     private var id: Long = 0
     private var name: String = "x"
     private var status: String = "schrodingered"

@@ -2,7 +2,8 @@ package com.app.juawcevada.rickspace.util.model.builder
 
 import com.app.juawcevada.rickspace.model.Location
 
-@CharacterDsl class LocationBuilder {
+@CharacterDsl
+class LocationBuilder {
     private var name = "Ask google"
     private var url = "http://they_re_watching"
 

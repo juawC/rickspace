@@ -20,7 +20,6 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.lang.NullPointerException
 import java.util.concurrent.Executor
 
 class CharacterListViewModelTest {
@@ -39,7 +38,7 @@ class CharacterListViewModelTest {
     @Before
     fun initViewModel() {
         listingRetryAction = mock()
-        listingPagedList  =MutableLiveData()
+        listingPagedList = MutableLiveData()
         listingNetworkState = MutableLiveData()
         refreshNetworkState = MutableLiveData()
 
@@ -87,7 +86,7 @@ class CharacterListViewModelTest {
         listingNetworkState.value = ResourceLoading()
 
         with(viewModel.viewState.value!!) {
-            assertEquals(characters , charactersList)
+            assertEquals(characters, charactersList)
             assertEquals(false, isLoading)
             assertEquals(false, isRefreshing)
             assertNull(errorMessage)
@@ -109,7 +108,7 @@ class CharacterListViewModelTest {
         listingNetworkState.value = ResourceSuccess()
 
         with(viewModel.viewState.value!!) {
-            assertEquals(characters , charactersList)
+            assertEquals(characters, charactersList)
             assertEquals(false, isLoading)
             assertEquals(false, isRefreshing)
             assertNull(errorMessage)
@@ -131,7 +130,7 @@ class CharacterListViewModelTest {
         listingNetworkState.value = ResourceError(error = NullPointerException())
 
         with(viewModel.viewState.value!!) {
-            assertEquals(characters , charactersList)
+            assertEquals(characters, charactersList)
             assertEquals(false, isLoading)
             assertEquals(false, isRefreshing)
             assertNull(errorMessage)
@@ -152,7 +151,7 @@ class CharacterListViewModelTest {
         listingNetworkState.value = ResourceError(error = NullPointerException())
 
         with(viewModel.viewState.value!!) {
-            assertEquals(emptyList<Character>() , charactersList)
+            assertEquals(emptyList<Character>(), charactersList)
             assertEquals(false, isLoading)
             assertEquals(false, isRefreshing)
             assertEquals("java.lang.NullPointerException", errorMessage)
@@ -177,7 +176,7 @@ class CharacterListViewModelTest {
         refreshNetworkState.value = ResourceLoading()
 
         with(viewModel.viewState.value!!) {
-            assertEquals(characters , charactersList)
+            assertEquals(characters, charactersList)
             assertEquals(false, isLoading)
             assertEquals(true, isRefreshing)
             assertNull(errorMessage)
@@ -186,7 +185,7 @@ class CharacterListViewModelTest {
         refreshNetworkState.value = ResourceSuccess()
 
         with(viewModel.viewState.value!!) {
-            assertEquals(characters , charactersList)
+            assertEquals(characters, charactersList)
             assertEquals(false, isLoading)
             assertEquals(false, isRefreshing)
             assertNull(errorMessage)
@@ -211,7 +210,7 @@ class CharacterListViewModelTest {
         refreshNetworkState.value = ResourceError(error = NullPointerException())
 
         with(viewModel.viewState.value!!) {
-            assertEquals(characters , charactersList)
+            assertEquals(characters, charactersList)
             assertEquals(false, isLoading)
             assertEquals(false, isRefreshing)
             assertNull(errorMessage)
@@ -242,7 +241,7 @@ class CharacterListViewModelTest {
             val event =
                     getContentIfNotHandled()!! as CharacterListNavigationActions.OpenCharacterDetail
 
-            assertEquals(0, event.id )
+            assertEquals(0, event.id)
         }
     }
 

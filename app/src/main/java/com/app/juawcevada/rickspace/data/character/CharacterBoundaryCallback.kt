@@ -5,7 +5,6 @@ import androidx.paging.PagedList
 import com.app.juawcevada.rickspace.data.shared.repository.Resource
 import com.app.juawcevada.rickspace.model.Character
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 
 class CharacterBoundaryCallback(
         private val coroutineScope: CoroutineScope,
@@ -14,11 +13,10 @@ class CharacterBoundaryCallback(
 ) : PagedList.BoundaryCallback<Character>() {
 
 
-
     val networkState: LiveData<Resource<Unit>>
         get() = singleResourceLoader.currentState
 
-    val retryAction : () -> Unit = {singleResourceLoader.retryLastAction()}
+    val retryAction: () -> Unit = { singleResourceLoader.retryLastAction() }
 
     override fun onZeroItemsLoaded() {
 

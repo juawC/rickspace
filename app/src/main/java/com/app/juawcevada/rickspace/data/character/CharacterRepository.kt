@@ -9,7 +9,8 @@ import com.app.juawcevada.rickspace.data.shared.remote.RickAndMortyService
 import com.app.juawcevada.rickspace.data.shared.repository.*
 import com.app.juawcevada.rickspace.dispatchers.AppDispatchers
 import com.app.juawcevada.rickspace.model.Character
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import ru.gildor.coroutines.retrofit.Result
 import ru.gildor.coroutines.retrofit.awaitResult
 import timber.log.Timber

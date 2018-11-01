@@ -11,7 +11,7 @@ class GetCharacterUseCase @Inject constructor(
         private val repository: CharacterRepository
 ) : UseCase<Long, LiveData<Character>>() {
 
-    override fun execute(coroutineScope: CoroutineScope,  parameters: Long): LiveData<Character> {
+    override fun execute(coroutineScope: CoroutineScope, parameters: Long): LiveData<Character> {
         return repository.getCharacterData(parameters)
     }
 }

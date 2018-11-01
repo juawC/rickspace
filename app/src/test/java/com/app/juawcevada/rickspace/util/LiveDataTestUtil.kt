@@ -2,7 +2,6 @@ package com.app.juawcevada.rickspace.util
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import kotlinx.coroutines.withTimeout
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -24,6 +23,7 @@ fun <T> LiveData<T>.getValueTest(): T? {
     latch.await(2, TimeUnit.SECONDS)
     return data
 }
+
 /**
  * Gets the value of a LiveData safely.
  */

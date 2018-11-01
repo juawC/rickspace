@@ -6,7 +6,10 @@ import com.app.juawcevada.rickspace.data.shared.remote.RickAndMortyService
 import com.app.juawcevada.rickspace.data.shared.repository.ResourceError
 import com.app.juawcevada.rickspace.data.shared.repository.ResourceSuccess
 import com.app.juawcevada.rickspace.dispatchers.AppDispatchers
-import com.app.juawcevada.rickspace.util.*
+import com.app.juawcevada.rickspace.util.MockCallError
+import com.app.juawcevada.rickspace.util.MockCallSuccess
+import com.app.juawcevada.rickspace.util.TestDataSourceFactory
+import com.app.juawcevada.rickspace.util.getValueTest
 import com.app.juawcevada.rickspace.util.model.builder.character
 import com.app.juawcevada.rickspace.util.model.builder.characterListInfo
 import com.nhaarman.mockitokotlin2.*
@@ -119,8 +122,8 @@ class CharacterRepositoryTest {
     fun refreshCharactersError() {
         val errorResponse =
                 MockCallError<CharacterListInfo>(
-                404,
-                RealResponseBody(null, 0 , Buffer()))
+                        404,
+                        RealResponseBody(null, 0, Buffer()))
 
         val apiServiceMock: RickAndMortyService = mock {
             on { getCharacters() } doReturn errorResponse

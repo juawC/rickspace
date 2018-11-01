@@ -28,4 +28,4 @@ class InfoBuilder {
     fun build() = Info(count, pages, next, prev)
 }
 
-fun info (body: InfoBuilder.() -> Unit) = InfoBuilder().apply(body).build()
+fun info(body: InfoBuilder.() -> Unit) = InfoBuilder().apply(body).build()

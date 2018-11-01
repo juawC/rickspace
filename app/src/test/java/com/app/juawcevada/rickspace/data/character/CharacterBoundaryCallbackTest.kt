@@ -37,8 +37,7 @@ class CharacterBoundaryCallbackTest {
     ): CharacterBoundaryCallback {
 
         val singleResourceLoader: SingleResourceLoader = mock {
-            on { loadData (any()) } doAnswer {
-                invocationOnMock ->
+            on { loadData(any()) } doAnswer { invocationOnMock ->
                 (invocationOnMock.arguments[0] as () -> LiveData<Resource<Unit>>).invoke()
                 Unit
             }

@@ -1,6 +1,7 @@
 package com.app.juawcevada.rickspace.ui.shared
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 
 /**
  * MediatorLiveData with helper functions to help update a ViewState

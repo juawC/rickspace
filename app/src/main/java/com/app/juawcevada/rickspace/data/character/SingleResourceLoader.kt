@@ -39,7 +39,7 @@ class SingleResourceLoader {
     fun retryLastAction() {
         currentLoadAction.value?.let {
             if (it.state is ResourceError) {
-                loadData (it.action)
+                loadData(it.action)
             }
         }
 

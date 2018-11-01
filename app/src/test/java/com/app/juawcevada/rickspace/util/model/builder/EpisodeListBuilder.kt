@@ -1,6 +1,7 @@
 package com.app.juawcevada.rickspace.util.model.builder
 
-@CharacterDsl class EpisodeListBuilder {
+@CharacterDsl
+class EpisodeListBuilder {
     private val episodes = mutableListOf<String>()
 
     fun episode(body: () -> String) {

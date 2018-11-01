@@ -8,11 +8,11 @@ class CharacterListInfoBuilder {
     var info: Info = InfoBuilder().build()
     var results: List<Character> = emptyList()
 
-    fun info(body: ()-> Info) {
+    fun info(body: () -> Info) {
         info = body()
     }
 
-    fun results(body: CharacterListBuilder.()-> Unit) {
+    fun results(body: CharacterListBuilder.() -> Unit) {
         results = CharacterListBuilder().apply(body).build()
     }
 

@@ -4,10 +4,10 @@ import okhttp3.Request
 import retrofit2.Callback
 import retrofit2.Response
 
-open class MockCall<T>(val response: Response<T>)  : retrofit2.Call<T> {
+open class MockCall<T>(val response: Response<T>) : retrofit2.Call<T> {
 
     override fun enqueue(callback: Callback<T>) {
-       callback.onResponse(this, response)
+        callback.onResponse(this, response)
     }
 
     override fun isExecuted() = true

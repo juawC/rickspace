@@ -2,7 +2,8 @@ package com.app.juawcevada.rickspace.util.model.builder
 
 import com.app.juawcevada.rickspace.model.Origin
 
-@CharacterDsl class OriginBuilder {
+@CharacterDsl
+class OriginBuilder {
     private var name = "Ask marvel"
     private var url = "http://sql_url"
 

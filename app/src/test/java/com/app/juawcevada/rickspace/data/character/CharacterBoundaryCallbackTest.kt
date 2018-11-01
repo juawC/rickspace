@@ -1,0 +1,49 @@
+package com.app.juawcevada.rickspace.data.character
+
+import androidx.lifecycle.LiveData
+import com.app.juawcevada.rickspace.data.shared.repository.Resource
+import com.app.juawcevada.rickspace.util.model.builder.character
+import com.nhaarman.mockitokotlin2.*
+import org.junit.Test
+
+class CharacterBoundaryCallbackTest {
+
+
+    @Test
+    fun onZeroItemsLoaded() {
+        val repositoryMock: CharacterRepository = mock()
+        val characterBoundaryCallBack = createCharacterBoundaryCallBack(repositoryMock)
+
+        characterBoundaryCallBack.onZeroItemsLoaded()
+
+        verify(repositoryMock).loadCharactersFirstPage(any())
+    }
+
+    @Test
+    fun onItemAtEndLoaded() {
+        val repositoryMock: CharacterRepository = mock()
+        val characterBoundaryCallBack = createCharacterBoundaryCallBack(repositoryMock)
+        val character = character {}
+
+        characterBoundaryCallBack.onItemAtEndLoaded(character)
+
+        verify(repositoryMock).loadCharactersNextPage(any(), eq(character))
+    }
+
+
+    private fun createCharacterBoundaryCallBack(
+            characterRepository: CharacterRepository = mock()
+    ): CharacterBoundaryCallback {
+
+        val singleResourceLoader: SingleResourceLoader = mock {
+            on { loadData (any()) } doAnswer {
+                invocationOnMock ->
+                (invocationOnMock.arguments[0] as () -> LiveData<Resource<Unit>>).invoke()
+                Unit
+            }
+        }
+
+        return CharacterBoundaryCallback(mock(), characterRepository, singleResourceLoader
+        )
+    }
+}

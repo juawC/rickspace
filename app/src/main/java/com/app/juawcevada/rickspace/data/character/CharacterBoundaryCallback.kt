@@ -9,10 +9,11 @@ import kotlinx.coroutines.Job
 
 class CharacterBoundaryCallback(
         private val coroutineScope: CoroutineScope,
-        private val characterRepository: CharacterRepository
+        private val characterRepository: CharacterRepository,
+        private val singleResourceLoader: SingleResourceLoader = SingleResourceLoader()
 ) : PagedList.BoundaryCallback<Character>() {
 
-    private val singleResourceLoader = SingleResourceLoader()
+
 
     val networkState: LiveData<Resource<Unit>>
         get() = singleResourceLoader.currentState

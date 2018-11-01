@@ -25,7 +25,8 @@ class SingleResourceLoader {
         }
 
         action().let { responseState ->
-            currentLoadAction.addSource(action()) {
+            currentLoadAction.value = LoadAction(ResourceLoading(), action)
+            currentLoadAction.addSource(responseState) {
                 currentLoadAction.value = LoadAction(it, action)
 
                 if (it is ResourceSuccess || it is ResourceError) {

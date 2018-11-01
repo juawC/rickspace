@@ -7,6 +7,7 @@ import androidx.paging.PagedList
 import com.app.juawcevada.rickspace.data.shared.local.AppDatabase
 import com.app.juawcevada.rickspace.data.shared.remote.RickAndMortyService
 import com.app.juawcevada.rickspace.data.shared.repository.*
+import com.app.juawcevada.rickspace.dispatchers.AppDispatchers
 import com.app.juawcevada.rickspace.model.Character
 import kotlinx.coroutines.*
 import ru.gildor.coroutines.retrofit.Result
@@ -16,7 +17,8 @@ import timber.log.Timber
 class CharacterRepository(
         private val appDatabase: AppDatabase,
         private val apiService: RickAndMortyService,
-        private val itemsByPage: Int
+        private val itemsByPage: Int,
+        private val appDispatchers: AppDispatchers
 ) {
 
     private fun insertResultDb(response: CharacterListInfo) {
@@ -36,14 +38,17 @@ class CharacterRepository(
         }
     }
 
-    fun loadCharactersNextPage(coroutineScope: CoroutineScope, lastCharacter: Character): LiveData<Resource<Unit>> {
+    fun loadCharactersNextPage(
+            coroutineScope: CoroutineScope,
+            lastCharacter: Character
+    ): LiveData<Resource<Unit>> {
         val networkState = MutableLiveData<Resource<Unit>>()
         if (!lastCharacter.hasNextPage()) {
             networkState.postValue(ResourceSuccess())
         } else {
             networkState.postValue(ResourceLoading())
 
-            coroutineScope.launch(Dispatchers.Default) {
+            coroutineScope.launch(appDispatchers.IO) {
                 val result: Result<CharacterListInfo> =
                         apiService.getCharactersByPage(lastCharacter.nextPage).awaitResult().apply {
                             doOnSuccess {
@@ -68,7 +73,7 @@ class CharacterRepository(
         val networkState = MutableLiveData<Resource<Unit>>()
         networkState.postValue(ResourceLoading())
 
-        coroutineScope.launch(Dispatchers.Default) {
+        coroutineScope.launch(appDispatchers.IO) {
             val result: Result<CharacterListInfo> = apiService.getCharacters().awaitResult().apply {
                 doOnSuccess {
                     insertResultDb(it)
@@ -85,7 +90,7 @@ class CharacterRepository(
         val networkState = MutableLiveData<Resource<Unit>>()
         networkState.postValue(ResourceLoading())
 
-        coroutineScope.launch(Dispatchers.Default) {
+        coroutineScope.launch(appDispatchers.IO) {
             val result: Result<CharacterListInfo> =
                     apiService.getCharacters().awaitResult().apply {
                         doOnSuccess {

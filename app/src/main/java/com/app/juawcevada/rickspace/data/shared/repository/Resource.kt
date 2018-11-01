@@ -1,6 +1,6 @@
 package com.app.juawcevada.rickspace.data.shared.repository
 
-sealed class Resource<out Data>(val data: Data?, val error: Throwable?) {
+sealed class Resource<out Data>(open val data: Data?, open val error: Throwable?) {
 
     inline fun <NewType> map(f: (Data) -> NewType): Resource<NewType> =
             when (this) {
@@ -10,13 +10,18 @@ sealed class Resource<out Data>(val data: Data?, val error: Throwable?) {
             }
 }
 
-class ResourceError<out Data>(
-        data: Data? = null,
-        error: Throwable? = null) : Resource<Data>(data, error)
+data class ResourceError<out Data>(
+        override val data: Data? = null,
+        override val error: Throwable? = null
+) : Resource<Data>(data, error)
 
-class ResourceSuccess<out Data>(data: Data? = null) : Resource<Data>(data, null)
+data class ResourceSuccess<out Data>(
+        override val data: Data? = null
+) : Resource<Data>(data, null)
 
-class ResourceLoading<out Data>(data: Data? = null) : Resource<Data>(data, null)
+data class ResourceLoading<out Data>(
+        override val data: Data? = null
+) : Resource<Data>(data, null)
 
 
 

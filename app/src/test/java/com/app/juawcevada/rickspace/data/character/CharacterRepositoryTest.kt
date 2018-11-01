@@ -10,16 +10,18 @@ import com.app.juawcevada.rickspace.util.*
 import com.app.juawcevada.rickspace.util.model.builder.character
 import com.app.juawcevada.rickspace.util.model.builder.characterListInfo
 import com.nhaarman.mockitokotlin2.*
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import okhttp3.internal.http.RealResponseBody
 import okio.Buffer
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
+@ExperimentalCoroutinesApi
 class CharacterRepositoryTest {
 
     @get:Rule

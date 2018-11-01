@@ -28,12 +28,12 @@ class CharacterListViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    lateinit var listing: Listing<Character>
-    lateinit var refreshNetworkState: MutableLiveData<Resource<Unit>>
-    lateinit var viewModel: CharacterListViewModel
-    lateinit var listingRetryAction: () -> Unit
-    lateinit var listingPagedList: MutableLiveData<PagedList<Character>>
-    lateinit var listingNetworkState: MutableLiveData<Resource<Unit>>
+    private lateinit var listing: Listing<Character>
+    private lateinit var refreshNetworkState: MutableLiveData<Resource<Unit>>
+    private lateinit var viewModel: CharacterListViewModel
+    private lateinit var listingRetryAction: () -> Unit
+    private lateinit var listingPagedList: MutableLiveData<PagedList<Character>>
+    private lateinit var listingNetworkState: MutableLiveData<Resource<Unit>>
 
 
     @Before

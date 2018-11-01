@@ -9,3 +9,5 @@ package com.app.juawcevada.rickspace.util.model.builder
 
     fun build() = episodes
 }
+
+fun episodes(body: EpisodeListBuilder.() -> Unit) = EpisodeListBuilder().apply(body).build()

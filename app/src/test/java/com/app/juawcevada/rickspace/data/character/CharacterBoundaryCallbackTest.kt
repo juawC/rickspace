@@ -6,6 +6,7 @@ import com.app.juawcevada.rickspace.util.model.builder.character
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
 
+@Suppress("UNCHECKED_CAST")
 class CharacterBoundaryCallbackTest {
 
 

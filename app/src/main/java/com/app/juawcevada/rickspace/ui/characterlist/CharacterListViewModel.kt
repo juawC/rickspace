@@ -28,7 +28,6 @@ class CharacterListViewModel @Inject constructor(
 
     private val characterList: LiveData<PagedList<Character>> = characterListing.pagedList
     private val networkState: LiveData<Resource<Unit>> = characterListing.networkState
-
     private val refreshNetworkState = MediatorLiveData<Resource<Unit>>()
 
     private val _viewState = ViewStateLiveData(CharacterListViewState())

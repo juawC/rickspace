@@ -2,7 +2,7 @@ package com.app.juawcevada.rickspace.data.character
 
 import androidx.lifecycle.LiveData
 import com.app.juawcevada.rickspace.data.shared.repository.Resource
-import com.app.juawcevada.rickspace.util.model.builder.character
+import com.app.juawcevada.rickspace.util.builder.character
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
 

@@ -4,8 +4,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import com.app.juawcevada.rickspace.domain.character.GetCharacterUseCase
 import com.app.juawcevada.rickspace.model.Character
-import com.app.juawcevada.rickspace.util.model.builder.character
-import com.app.juawcevada.rickspace.util.model.builder.episodes
+import com.app.juawcevada.rickspace.util.builder.character
+import com.app.juawcevada.rickspace.util.builder.episodes
 import com.app.juawcevada.rickspace.util.observeTest
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn

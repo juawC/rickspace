@@ -10,8 +10,8 @@ import com.app.juawcevada.rickspace.util.MockCallError
 import com.app.juawcevada.rickspace.util.MockCallSuccess
 import com.app.juawcevada.rickspace.util.TestDataSourceFactory
 import com.app.juawcevada.rickspace.util.getValueTest
-import com.app.juawcevada.rickspace.util.model.builder.character
-import com.app.juawcevada.rickspace.util.model.builder.characterListInfo
+import com.app.juawcevada.rickspace.util.builder.character
+import com.app.juawcevada.rickspace.util.builder.characterListInfo
 import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

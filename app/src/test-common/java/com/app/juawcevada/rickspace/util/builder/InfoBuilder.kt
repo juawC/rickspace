@@ -1,4 +1,4 @@
-package com.app.juawcevada.rickspace.util.model.builder
+package com.app.juawcevada.rickspace.util.builder
 
 import com.app.juawcevada.rickspace.data.character.Info
 

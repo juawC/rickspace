@@ -13,12 +13,13 @@ import com.app.juawcevada.rickspace.domain.character.RefreshCharactersUseCase
 import com.app.juawcevada.rickspace.domain.shared.runInScope
 import com.app.juawcevada.rickspace.event.Event
 import com.app.juawcevada.rickspace.model.Character
+import com.app.juawcevada.rickspace.testing.OpenClassOnDebug
 import com.app.juawcevada.rickspace.ui.shared.ScopedViewModel
 import com.app.juawcevada.rickspace.ui.shared.SnackbarMessage
 import com.app.juawcevada.rickspace.ui.shared.ViewStateLiveData
 import javax.inject.Inject
 
-class CharacterListViewModel @Inject constructor(
+@OpenClassOnDebug class CharacterListViewModel @Inject constructor(
         private val getCharactersUseCase: GetCharactersUseCase,
         private val refreshCharactersUseCase: RefreshCharactersUseCase
 ) : ScopedViewModel(), CharacterListViewActions {

@@ -1,4 +1,4 @@
-package com.app.juawcevada.rickspace.util.model.builder
+package com.app.juawcevada.rickspace.util.builder
 
 @CharacterDsl
 class EpisodeListBuilder {

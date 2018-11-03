@@ -2,18 +2,14 @@ package com.app.juawcevada.rickspace.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.navigation.NavController
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.swipeDown
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import com.app.juawcevada.rickspace.event.Event
 import com.app.juawcevada.rickspace.testing.SingleFragmentActivity
-import com.app.juawcevada.rickspace.ui.characterlist.CharacterListFragment
-import com.app.juawcevada.rickspace.ui.characterlist.CharacterListNavigationActions
-import com.app.juawcevada.rickspace.ui.characterlist.CharacterListViewModel
-import com.app.juawcevada.rickspace.ui.characterlist.CharacterListViewState
 import com.app.juawcevada.rickspace.ui.shared.SnackbarMessage
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -21,10 +17,14 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import com.app.juawcevada.rickspace.R.id.*
 import com.app.juawcevada.rickspace.R
+import com.app.juawcevada.rickspace.ui.characterlist.*
 import com.app.juawcevada.rickspace.ui.shared.FragmentBindingAdapters
 import com.app.juawcevada.rickspace.ui.shared.FragmentDataBindingComponent
-import com.app.juawcevada.rickspace.util.createTestFactory
+import com.app.juawcevada.rickspace.util.*
+import com.app.juawcevada.rickspace.util.builder.character
+import com.nhaarman.mockitokotlin2.verify
 
 @RunWith(AndroidJUnit4::class)
 class CharacterListFragmentTest {
@@ -43,17 +43,14 @@ class CharacterListFragmentTest {
     private lateinit var navigationAction: MutableLiveData<Event<CharacterListNavigationActions>>
     private lateinit var errorMessage: MutableLiveData<Event<SnackbarMessage>>
     private lateinit var viewState: MutableLiveData<CharacterListViewState>
-    private lateinit var fragment: CharacterListFragment
-    private lateinit var mockBindingAdapter: FragmentBindingAdapters
+    private lateinit var fragment: CharacterListFragmentMockNavigation
 
     @Before
     fun initViewModel() {
         navigationAction = MutableLiveData()
         errorMessage = MutableLiveData()
         viewState = MutableLiveData()
-        fragment = CharacterListFragment()
-
-        mockBindingAdapter = mock()
+        fragment = CharacterListFragmentMockNavigation()
 
         characterListViewModel = mock {
             on {viewState} doReturn this@CharacterListFragmentTest.viewState
@@ -64,9 +61,7 @@ class CharacterListFragmentTest {
         fragment.viewModelFactory = characterListViewModel.createTestFactory()
 
         fragment.fragmentDataBindingComponent = object : FragmentDataBindingComponent(fragment) {
-            override fun getFragmentBindingAdapters(): FragmentBindingAdapters {
-                return mockBindingAdapter
-            }
+            override fun getFragmentBindingAdapters() = mock<FragmentBindingAdapters>()
         }
 
         activityRule.activity.replaceFragment(fragment)
@@ -76,6 +71,126 @@ class CharacterListFragmentTest {
     @Test
     fun loading() {
         viewState.value = CharacterListViewState(isLoading = true)
-        onView(withId(R.id.spin_kit)).check(matches(isDisplayed()))
+
+        spin_kit checkThatMatches isDisplayed()
+    }
+
+    @Test
+    fun error() {
+        val errorMessage = "Oops universe not found!"
+        viewState.value = CharacterListViewState(errorMessage = errorMessage)
+
+        error_text_title checkThatMatches withText(errorMessage)
+        error_icon checkThatMatches isDisplayed()
+        error_retry_button checkThatMatches isDisplayed()
+    }
+
+
+    @Test
+    fun showCharacterList() {
+        val charactersList = mutableListOf(
+                character {
+                    name { "Rick" }
+                    location {
+                        name { "Earth" }
+                    }
+                    origin {
+                        name { "Another Earth" }
+                    }
+                    species { "Human" }
+                },
+                character {
+                    name { "Morty" }
+                    location {
+                        name { "Earth" }
+                    }
+                    origin {
+                        name { "Another Earth" }
+                    }
+                    species { "Human" }
+                }
+        )
+        val characterPagedList = TestDataSourceFactory(charactersList).buildPagedList()
+        viewState.value = CharacterListViewState(charactersList = characterPagedList)
+
+        list onRecyclerViewPosition 0 checkThatMatches all {
+            matcher { hasDescendant(withText("Rick")) }
+            matcher { hasDescendant(withText("Earth")) }
+            matcher { hasDescendant(withText("Another Earth")) }
+            matcher { hasDescendant(withText("Human")) }
+        }
+
+        list onRecyclerViewPosition 1 checkThatMatches all {
+            matcher { hasDescendant(withText("Morty")) }
+            matcher { hasDescendant(withText("Earth")) }
+            matcher { hasDescendant(withText("Another Earth")) }
+            matcher { hasDescendant(withText("Human")) }
+        }
+    }
+
+
+    @Test
+    fun navigateToDetail() {
+        val charactersList = mutableListOf(
+                character {
+                    id { 1 }
+                }
+        )
+        val characterPagedList = TestDataSourceFactory(charactersList).buildPagedList()
+        viewState.value = CharacterListViewState(charactersList = characterPagedList)
+        navigationAction.postValue(Event(CharacterListNavigationActions.OpenCharacterDetail(1)))
+
+        list onRecyclerViewPosition 0 perform click()
+
+        verify(characterListViewModel).openCharacter(1)
+
+        val navigationAction =
+                CharacterListFragmentDirections
+                        .actionCharacterListFragmentToCharacterDetailFragment(1)
+        verify(fragment.navController).navigate(navigationAction)
+    }
+
+    @Test
+    fun refresh() {
+        val charactersList = mutableListOf(
+                character {}
+        )
+
+        val characterPagedList = TestDataSourceFactory(charactersList).buildPagedList()
+        viewState.value = CharacterListViewState(charactersList = characterPagedList)
+
+        swipe_to_refresh perform swipeDown()
+
+        verify(characterListViewModel).refresh()
+    }
+
+
+    @Test
+    fun retry() {
+        val errorMessage = "Meeseeks are asleep now!"
+        viewState.value = CharacterListViewState(errorMessage = errorMessage)
+
+        error_retry_button perform click()
+
+        verify(characterListViewModel).retry()
+    }
+
+    @Test
+    fun errorToast() {
+        val charactersList = mutableListOf(
+                character {}
+        )
+
+        val characterPagedList = TestDataSourceFactory(charactersList).buildPagedList()
+        viewState.value = CharacterListViewState(charactersList = characterPagedList)
+        errorMessage.value =  Event(SnackbarMessage(R.string.default_error_message))
+
+        snackbar_text checkThatMatches withText(R.string.default_error_message)
+    }
+
+
+    class CharacterListFragmentMockNavigation: CharacterListFragment() {
+        val navController = mock<NavController>()
+        override fun navController() = navController
     }
 }

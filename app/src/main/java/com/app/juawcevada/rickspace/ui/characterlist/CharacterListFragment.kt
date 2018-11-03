@@ -14,11 +14,13 @@ import com.app.juawcevada.rickspace.event.EventObserver
 import com.app.juawcevada.rickspace.extensions.checkExhaustion
 import com.app.juawcevada.rickspace.extensions.setUpSnackbar
 import com.app.juawcevada.rickspace.extensions.viewModelProvider
+import com.app.juawcevada.rickspace.testing.OpenClassOnDebug
 import com.app.juawcevada.rickspace.ui.shared.FragmentDataBindingComponent
 import com.app.juawcevada.rickspace.ui.shared.VerticalSpaceItemDecoration
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
+@OpenClassOnDebug
 class CharacterListFragment : Fragment() {
 
     @Inject
@@ -71,7 +73,7 @@ class CharacterListFragment : Fragment() {
                     val action =
                             CharacterListFragmentDirections
                                     .actionCharacterListFragmentToCharacterDetailFragment(event.id)
-                    findNavController().navigate(action)
+                    navController().navigate(action)
                 }
             }.checkExhaustion
         })
@@ -86,4 +88,9 @@ class CharacterListFragment : Fragment() {
         viewModel.errorMessage.removeObservers(this)
         viewModel.navigationAction.removeObservers(this)
     }
+
+    /**
+     * Created to be able to override in tests
+     */
+    fun navController() = findNavController()
 }

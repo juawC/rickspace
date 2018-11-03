@@ -9,7 +9,7 @@ import androidx.lifecycle.MediatorLiveData
 class ViewStateLiveData<T>(initialState: T) : MediatorLiveData<T>() {
 
     init {
-        postValue(initialState)
+        value = initialState
     }
 
     fun <S> addNewStateSource(source: LiveData<S>, newStateCreator: T.(S) -> T) {
@@ -18,7 +18,7 @@ class ViewStateLiveData<T>(initialState: T) : MediatorLiveData<T>() {
         }
     }
 
-    fun dispatchState(newStateCreator: T.() -> T) {
+    private fun dispatchState(newStateCreator: T.() -> T) {
         value = value!!.newStateCreator()
     }
 }

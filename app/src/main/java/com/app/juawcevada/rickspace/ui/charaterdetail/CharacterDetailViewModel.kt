@@ -8,10 +8,13 @@ import com.app.juawcevada.rickspace.domain.character.GetCharacterUseCase
 import com.app.juawcevada.rickspace.domain.shared.runInScope
 import com.app.juawcevada.rickspace.extensions.setValueIfNew
 import com.app.juawcevada.rickspace.model.Character
+import com.app.juawcevada.rickspace.testing.OpenClassOnDebug
 import com.app.juawcevada.rickspace.ui.shared.ScopedViewModel
+import com.app.juawcevada.rickspace.ui.shared.ViewStateLiveData
 import javax.inject.Inject
 
 
+@OpenClassOnDebug
 class CharacterDetailViewModel @Inject constructor(
         private val getCharacterUseCase: GetCharacterUseCase
 ) : ScopedViewModel() {
@@ -21,15 +24,13 @@ class CharacterDetailViewModel @Inject constructor(
         runInScope { getCharacterUseCase(it) }
     }
 
-    val viewState = MediatorLiveData<CharacterDetailViewState>().apply {
-        value = CharacterDetailViewState()
-    }
-
-    init {
-        viewState.addSource(characterResult) {
-            viewState.value = viewState.value?.copy(character = it, characterEpisodes = it.episode)
+    private val _viewState = ViewStateLiveData(CharacterDetailViewState()).apply {
+        addNewStateSource(characterResult) {
+            copy(character = it, characterEpisodes = it.episode)
         }
     }
+    val viewState: LiveData<CharacterDetailViewState>
+    get() = _viewState
 
     fun setCharacterId(id: Long) {
         characterId.setValueIfNew(id)

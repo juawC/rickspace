@@ -20,7 +20,6 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.util.concurrent.Executor
 
 class CharacterListViewModelTest {
 
@@ -60,7 +59,7 @@ class CharacterListViewModelTest {
 
     @Test
     fun loadingEmptyList() {
-        listingPagedList.value = createPagedList()
+        listingPagedList.value = TestDataSourceFactory().buildPagedList()
         listingNetworkState.value = ResourceLoading()
 
         with(viewModel.viewState.value!!) {
@@ -82,7 +81,7 @@ class CharacterListViewModelTest {
     @Test
     fun loadingNotEmptyList() {
         val characters = mutableListOf(character {})
-        listingPagedList.value = createPagedList(characters)
+        listingPagedList.value = TestDataSourceFactory(characters).buildPagedList()
         listingNetworkState.value = ResourceLoading()
 
         with(viewModel.viewState.value!!) {
@@ -104,7 +103,7 @@ class CharacterListViewModelTest {
     @Test
     fun successList() {
         val characters = mutableListOf(character {})
-        listingPagedList.value = createPagedList(characters)
+        listingPagedList.value = TestDataSourceFactory(characters).buildPagedList()
         listingNetworkState.value = ResourceSuccess()
 
         with(viewModel.viewState.value!!) {
@@ -126,7 +125,7 @@ class CharacterListViewModelTest {
     @Test
     fun errorListNotEmpty() {
         val characters = mutableListOf(character {})
-        listingPagedList.value = createPagedList(characters)
+        listingPagedList.value = TestDataSourceFactory(characters).buildPagedList()
         listingNetworkState.value = ResourceError(error = NullPointerException())
 
         with(viewModel.viewState.value!!) {
@@ -147,7 +146,7 @@ class CharacterListViewModelTest {
 
     @Test
     fun errorListEmpty() {
-        listingPagedList.value = createPagedList()
+        listingPagedList.value = TestDataSourceFactory().buildPagedList()
         listingNetworkState.value = ResourceError(error = NullPointerException())
 
         with(viewModel.viewState.value!!) {
@@ -169,7 +168,7 @@ class CharacterListViewModelTest {
     @Test
     fun refreshListSuccess() {
         val characters = mutableListOf(character {})
-        listingPagedList.value = createPagedList(characters)
+        listingPagedList.value = TestDataSourceFactory(characters).buildPagedList()
         listingNetworkState.value = ResourceSuccess()
 
         viewModel.refresh()
@@ -203,7 +202,7 @@ class CharacterListViewModelTest {
     @Test
     fun refreshListError() {
         val characters = mutableListOf(character {})
-        listingPagedList.value = createPagedList(characters)
+        listingPagedList.value = TestDataSourceFactory(characters).buildPagedList()
         listingNetworkState.value = ResourceSuccess()
 
         viewModel.refresh()
@@ -245,17 +244,4 @@ class CharacterListViewModelTest {
         }
     }
 
-    private fun createPagedList(
-            characterList: MutableList<Character> = mutableListOf()
-    ): PagedList<Character> {
-        val instantExecutor = Executor { it.run() }
-        val testDataSourceFactory = TestDataSourceFactory(characterList)
-        val pagingConfig = PagedList.Config.Builder().setPageSize(1).build()
-
-        return PagedList
-                .Builder(testDataSourceFactory.create(), pagingConfig)
-                .setNotifyExecutor(instantExecutor)
-                .setFetchExecutor(instantExecutor)
-                .build()
-    }
 }

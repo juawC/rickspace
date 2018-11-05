@@ -26,7 +26,6 @@ import com.app.juawcevada.rickspace.util.*
 import com.app.juawcevada.rickspace.util.builder.character
 import com.nhaarman.mockitokotlin2.verify
 
-@RunWith(AndroidJUnit4::class)
 class CharacterListFragmentTest {
 
     @get:Rule

@@ -66,7 +66,7 @@ class CharacterListFragment : Fragment() {
                     }
                 }
 
-        viewModel.navigationAction.observe(this, EventObserver { event ->
+        viewModel.navigationAction.observe(viewLifecycleOwner, EventObserver { event ->
 
             when (event) {
                 is CharacterListNavigationActions.OpenCharacterDetail -> {
@@ -81,12 +81,6 @@ class CharacterListFragment : Fragment() {
         setUpSnackbar(viewModel.errorMessage, binding.root)
 
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        viewModel.errorMessage.removeObservers(this)
-        viewModel.navigationAction.removeObservers(this)
     }
 
     /**

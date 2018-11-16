@@ -25,7 +25,7 @@ import javax.inject.Inject
 ) : ScopedViewModel(), CharacterListViewActions {
 
 
-    private val characterListing = runInScope { getCharactersUseCase(Unit) }
+    private val characterListing = runInScope { getCharactersUseCase() }
 
     private val characterList: LiveData<PagedList<Character>> = characterListing.pagedList
     private val networkState: LiveData<Resource<Unit>> = characterListing.networkState

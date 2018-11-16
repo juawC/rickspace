@@ -11,6 +11,8 @@ class GetCharactersUseCase @Inject constructor(
         private val repository: CharacterRepository
 ) : UseCase<Unit, Listing<Character>>() {
 
+    operator fun invoke():CoroutineScope.() -> Listing<Character> = invoke(Unit)
+
     override fun execute(coroutineScope: CoroutineScope, parameters: Unit): Listing<Character> {
         return repository.getCharactersData(coroutineScope)
     }

@@ -6,6 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.juawcevada.rickspace.model.Character
 
 @BindingAdapter("setCharactersList")
-fun setCharactersList(recyclerView: RecyclerView, charactersList: PagedList<Character>?) {
+fun setCharactersList(recyclerView: RecyclerView, charactersList: List<Character>?) {
     (recyclerView.adapter as CharacterListAdapter).submitList(charactersList)
 }

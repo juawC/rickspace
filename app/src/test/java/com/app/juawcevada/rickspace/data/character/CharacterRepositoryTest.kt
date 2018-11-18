@@ -1,17 +1,23 @@
 package com.app.juawcevada.rickspace.data.character
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import arrow.core.Try
+import arrow.core.getOrElse
 import com.app.juawcevada.rickspace.data.shared.local.AppDatabase
 import com.app.juawcevada.rickspace.data.shared.remote.RickAndMortyService
+import com.app.juawcevada.rickspace.data.shared.repository.Resource
 import com.app.juawcevada.rickspace.data.shared.repository.ResourceError
+import com.app.juawcevada.rickspace.data.shared.repository.ResourceLoading
 import com.app.juawcevada.rickspace.data.shared.repository.ResourceSuccess
 import com.app.juawcevada.rickspace.dispatchers.AppDispatchers
+import com.app.juawcevada.rickspace.model.Character
 import com.app.juawcevada.rickspace.util.MockCallError
 import com.app.juawcevada.rickspace.util.MockCallSuccess
-import com.app.juawcevada.rickspace.util.TestDataSourceFactory
-import com.app.juawcevada.rickspace.util.getValueTest
-import com.app.juawcevada.rickspace.util.builder.character
+import com.app.juawcevada.rickspace.util.builder.characterList
 import com.app.juawcevada.rickspace.util.builder.characterListInfo
+import com.app.juawcevada.rickspace.util.getValueTest
 import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,8 +27,11 @@ import okio.Buffer
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import retrofit2.HttpException
+import java.lang.Exception
 
 @ExperimentalCoroutinesApi
 class CharacterRepositoryTest {
@@ -37,62 +46,65 @@ class CharacterRepositoryTest {
                     Dispatchers.Unconfined)
 
     @Test
-    fun loadCharactersFirstPage() {
-        val testDataSourceFactory = TestDataSourceFactory()
+    fun loadCharactersSuccess() {
+
         val characterRepository = buildRepository(
                 apiServiceMock = mock {
-                    on { getCharacters() } doReturn MockCallSuccess(characterListInfo {})
+                    on { getCharacters() } doReturn MockCallSuccess(
+                            characterListInfo {
+                                results {
+                                   character { id { 1 } }
+                                }
+                            }
+                    )
                 },
                 characterDaoMock = mock {
-                    on { getAllCharacters() } doReturn testDataSourceFactory
-                    on { getNextIndexCharacter() } doReturn 0
+                    on { getAllCharacters() } doReturn MutableLiveData<List<Character>>().apply {
+                        value = characterList {
+                            character { id { 1 } }
+                        }
+                    }
                 })
 
         runBlocking {
-            val listing = characterRepository.getCharactersData(this)
-            val pagedList = listing.pagedList.getValueTest()!!
-            assertEquals(0, pagedList.size)
+            val expectedList = characterList {
+                character { id { 1 } }
+            }
+            val mockObserver: Observer<Resource<List<Character>>> = mock()
+            characterRepository.getCharactersData(this).observeForever(mockObserver)
+            verify(mockObserver).onChanged(ResourceLoading(expectedList))
+            verify(mockObserver).onChanged(ResourceSuccess(expectedList))
         }
     }
 
     @Test
-    fun loadCharactersNextPage() {
-        val testDataSourceFactory =
-                TestDataSourceFactory(
-                        mutableListOf(
-                                character { id { 1 } },
-                                character { id { 2 } },
-                                character { id { 3 } },
-                                character { id { 4 } },
-                                character { id { 5 } },
-                                character { id { 6 } },
-                                character { id { 7 } },
-                                character { id { 8 } },
-                                character { id { 9 } },
-                                character {
-                                    id { 10 }
-                                    nextPage { 1 }
-                                }
+    fun loadCharactersError() {
 
-                        ))
-
-        val apiServiceMock: RickAndMortyService = mock {
-            on { getCharactersByPage(any()) } doReturn MockCallSuccess(characterListInfo {})
-        }
-
-        val characterDaoMock: CharacterDao = mock {
-            on { getAllCharacters() } doReturn testDataSourceFactory
-            on { getNextIndexCharacter() } doReturn 0
-        }
-
-        val characterRepository = buildRepository(apiServiceMock, characterDaoMock)
+        val characterRepository = buildRepository(
+                apiServiceMock = mock {
+                    on { getCharacters() } doReturn MockCallError(
+                            404,
+                            RealResponseBody(null, 0, Buffer()))
+                },
+                characterDaoMock = mock {
+                    on { getAllCharacters() } doReturn MutableLiveData<List<Character>>().apply {
+                        value = characterList {
+                            character { id { 1 } }
+                        }
+                    }
+                })
 
         runBlocking {
-            val listing = characterRepository.getCharactersData(this)
-            val pagedList = listing.pagedList.getValueTest()!!
-            assertEquals(10, pagedList.size)
-            verify(apiServiceMock).getCharactersByPage(1)
-            verify(characterDaoMock).insertAll(any())
+            val expectedList = characterList {
+                character { id { 1 } }
+            }
+            val expectedResult = ResourceError(expectedList, Exception())
+            val result = characterRepository.getCharactersData(this)
+            val resultLoading = result.getValueTest()!!
+            val resultError = result.getValueTest()!!
+            assertTrue(resultLoading is ResourceLoading)
+            assertTrue(resultError is ResourceError)
+            assertEquals(expectedResult.data, result.getValueTest()!!.data)
         }
     }
 
@@ -102,15 +114,11 @@ class CharacterRepositoryTest {
             on { getCharacters() } doReturn MockCallSuccess(characterListInfo {})
         }
 
-        val characterDaoMock: CharacterDao = mock {
-            on { getNextIndexCharacter() } doReturn 0
-        }
+        val characterDaoMock: CharacterDao = mock ()
 
         val characterRepository = buildRepository(apiServiceMock, characterDaoMock)
         runBlocking {
-            val networkState = characterRepository.refreshCharactersData(this)
-
-            assertEquals(ResourceSuccess(Unit), networkState.getValueTest())
+            assertEquals(Try.Success(Unit), characterRepository.refreshCharactersData())
             inOrder(characterDaoMock) {
                 verify(characterDaoMock).deleteAllCharacters()
                 verify(characterDaoMock).insertAll(any())
@@ -129,15 +137,14 @@ class CharacterRepositoryTest {
             on { getCharacters() } doReturn errorResponse
         }
 
-        val characterDaoMock: CharacterDao = mock {
-            on { getNextIndexCharacter() } doReturn 0
-        }
+        val characterDaoMock: CharacterDao = mock ()
 
         val characterRepository = buildRepository(apiServiceMock, characterDaoMock)
         runBlocking {
-            val networkState = characterRepository.refreshCharactersData(this)
 
-            assertThat(networkState.getValueTest(), instanceOf(ResourceError<Unit>()::class.java))
+            assertThat(
+                    characterRepository.refreshCharactersData().failed().getOrElse { it },
+                    instanceOf(HttpException::class.java))
             verify(characterDaoMock, never()).deleteAllCharacters()
             verify(characterDaoMock, never()).insertAll(any())
         }
@@ -159,7 +166,6 @@ class CharacterRepositoryTest {
         return CharacterRepository(
                 appDatabaseMock,
                 apiServiceMock,
-                10,
                 appTestDispatchers)
     }
 }

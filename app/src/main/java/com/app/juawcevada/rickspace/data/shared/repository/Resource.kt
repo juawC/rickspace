@@ -1,5 +1,8 @@
 package com.app.juawcevada.rickspace.data.shared.repository
 
+import arrow.core.Try
+import arrow.core.getOrElse
+
 sealed class Resource<out Data>(open val data: Data?, open val error: Throwable?) {
 
     inline fun <NewType> map(f: (Data) -> NewType): Resource<NewType> =
@@ -24,4 +27,6 @@ data class ResourceLoading<out Data>(
 ) : Resource<Data>(data, null)
 
 
-
+fun <T : Any> Try<T>.toResource(): Resource<T> {
+    return this.map { ResourceSuccess(it) }.getOrElse { ResourceError(error = it) }
+}

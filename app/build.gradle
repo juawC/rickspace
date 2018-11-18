@@ -55,8 +55,8 @@ dependencies {
     def retrofit_version = "2.4.0"
     def glide_version = "4.8.0"
     def room_version = "2.0.0"
-    def paging_version = "2.0.0"
     def okhttp_version = "3.11.0"
+    def arrow_version = "0.8.1"
 
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -72,7 +72,6 @@ dependencies {
     implementation "android.arch.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
-    implementation "androidx.paging:paging-runtime:$paging_version"
     implementation 'com.google.android.material:material:1.0.0'
 
     implementation "com.github.bumptech.glide:glide:$glide_version"
@@ -92,6 +91,8 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     implementation 'com.github.ybq:Android-SpinKit:1.1.0'
+
+    implementation "io.arrow-kt:arrow-core:$arrow_version"
 
     implementation 'ru.gildor.coroutines:kotlin-coroutines-retrofit:0.13.0-eap13'
     testImplementation 'junit:junit:4.12'

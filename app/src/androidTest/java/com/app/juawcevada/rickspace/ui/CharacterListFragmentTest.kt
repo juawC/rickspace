@@ -6,7 +6,6 @@ import androidx.navigation.NavController
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.swipeDown
 import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import com.app.juawcevada.rickspace.event.Event
 import com.app.juawcevada.rickspace.testing.SingleFragmentActivity
@@ -16,7 +15,6 @@ import com.nhaarman.mockitokotlin2.mock
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import com.app.juawcevada.rickspace.R.id.*
 import com.app.juawcevada.rickspace.R
 import com.app.juawcevada.rickspace.ui.characterlist.*
@@ -109,8 +107,7 @@ class CharacterListFragmentTest {
                     species { "Human" }
                 }
         )
-        val characterPagedList = TestDataSourceFactory(charactersList).buildPagedList()
-        viewState.value = CharacterListViewState(charactersList = characterPagedList)
+        viewState.value = CharacterListViewState(charactersList = charactersList)
 
         list onRecyclerViewPosition 0 checkThatMatches all {
             matcher { hasDescendant(withText("Rick")) }
@@ -135,8 +132,7 @@ class CharacterListFragmentTest {
                     id { 1 }
                 }
         )
-        val characterPagedList = TestDataSourceFactory(charactersList).buildPagedList()
-        viewState.value = CharacterListViewState(charactersList = characterPagedList)
+        viewState.value = CharacterListViewState(charactersList = charactersList)
         navigationAction.postValue(Event(CharacterListNavigationActions.OpenCharacterDetail(1)))
 
         list onRecyclerViewPosition 0 perform click()
@@ -155,8 +151,7 @@ class CharacterListFragmentTest {
                 character {}
         )
 
-        val characterPagedList = TestDataSourceFactory(charactersList).buildPagedList()
-        viewState.value = CharacterListViewState(charactersList = characterPagedList)
+        viewState.value = CharacterListViewState(charactersList = charactersList)
 
         swipe_to_refresh perform swipeDown()
 
@@ -180,8 +175,7 @@ class CharacterListFragmentTest {
                 character {}
         )
 
-        val characterPagedList = TestDataSourceFactory(charactersList).buildPagedList()
-        viewState.value = CharacterListViewState(charactersList = characterPagedList)
+        viewState.value = CharacterListViewState(charactersList = charactersList)
         errorMessage.value =  Event(SnackbarMessage(R.string.default_error_message))
 
         snackbar_text checkThatMatches withText(R.string.default_error_message)

@@ -1,21 +1,18 @@
 package com.app.juawcevada.rickspace.domain.character
 
-import androidx.lifecycle.LiveData
+import arrow.core.Try
 import com.app.juawcevada.rickspace.data.character.CharacterRepository
-import com.app.juawcevada.rickspace.data.shared.repository.Resource
-import com.app.juawcevada.rickspace.domain.shared.UseCase
-import kotlinx.coroutines.CoroutineScope
+import com.app.juawcevada.rickspace.domain.shared.SuspendUseCase
 import javax.inject.Inject
 
 class RefreshCharactersUseCase @Inject constructor(
         private val repository: CharacterRepository
-) : UseCase<Unit, LiveData<Resource<Unit>>>() {
+) : SuspendUseCase<Unit, Try<Unit>>() {
 
-    override fun execute(
-            coroutineScope: CoroutineScope,
+    override suspend fun execute(
             parameters: Unit
-    ): LiveData<Resource<Unit>> {
+    ): Try<Unit> {
 
-        return repository.refreshCharactersData(coroutineScope)
+        return repository.refreshCharactersData()
     }
 }

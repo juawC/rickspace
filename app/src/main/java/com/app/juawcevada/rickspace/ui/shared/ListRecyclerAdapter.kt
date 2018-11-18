@@ -17,7 +17,7 @@ abstract class ListRecyclerAdapter<DataType, BindingType : ViewDataBinding>
 
     abstract val differ: AsyncListDiffer<DataType>
 
-    fun submitList(list: List<DataType>) {
+    fun submitList(list: List<DataType>?) {
         differ.submitList(list)
     }
 

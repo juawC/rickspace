@@ -1,4 +1,4 @@
-package com.app.juawcevada.rickspace.data.character
+package com.app.juawcevada.rickspace.data.shared.remote
 
 
 import com.app.juawcevada.rickspace.data.shared.repository.Resource

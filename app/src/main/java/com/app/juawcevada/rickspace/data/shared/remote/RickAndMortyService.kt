@@ -12,9 +12,6 @@ interface RickAndMortyService {
     @GET("character/")
     fun getCharacters(): Call<CharacterListInfo>
 
-    @GET("character")
-    fun getCharactersByPage(@Query("page") page: Int): Call<CharacterListInfo>
-
     @GET("character/{id}")
     fun getCharacter(@Path("id") id: Int): Call<Character>
 }

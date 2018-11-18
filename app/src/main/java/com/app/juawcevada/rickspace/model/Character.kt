@@ -19,11 +19,4 @@ data class Character(
         val image: String,
         val episode: List<String>,
         val url: String
-) {
-    // to be consistent w/ changing backend order, we need to keep a data like this
-    var indexInResponse: Int = -1
-
-    // This shouldn't be here, it belongs to another db table, but putting it here makes this
-    // implementation easier
-    var nextPage: Int = -1
-}
+)

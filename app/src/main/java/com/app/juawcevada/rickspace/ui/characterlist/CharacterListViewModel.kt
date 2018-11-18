@@ -2,12 +2,14 @@ package com.app.juawcevada.rickspace.ui.characterlist
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.paging.PagedList
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.app.juawcevada.rickspace.R
 import com.app.juawcevada.rickspace.data.shared.repository.Resource
 import com.app.juawcevada.rickspace.data.shared.repository.ResourceError
 import com.app.juawcevada.rickspace.data.shared.repository.ResourceLoading
-import com.app.juawcevada.rickspace.data.shared.repository.ResourceSuccess
+import com.app.juawcevada.rickspace.data.shared.repository.toResource
+import com.app.juawcevada.rickspace.dispatchers.AppDispatchers
 import com.app.juawcevada.rickspace.domain.character.GetCharactersUseCase
 import com.app.juawcevada.rickspace.domain.character.RefreshCharactersUseCase
 import com.app.juawcevada.rickspace.domain.shared.runInScope
@@ -17,18 +19,23 @@ import com.app.juawcevada.rickspace.testing.OpenClassOnDebug
 import com.app.juawcevada.rickspace.ui.shared.ScopedViewModel
 import com.app.juawcevada.rickspace.ui.shared.SnackbarMessage
 import com.app.juawcevada.rickspace.ui.shared.ViewStateLiveData
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OpenClassOnDebug class CharacterListViewModel @Inject constructor(
+@OpenClassOnDebug
+class CharacterListViewModel @Inject constructor(
         private val getCharactersUseCase: GetCharactersUseCase,
-        private val refreshCharactersUseCase: RefreshCharactersUseCase
+        private val refreshCharactersUseCase: RefreshCharactersUseCase,
+        private val appDispatchers: AppDispatchers
 ) : ScopedViewModel(), CharacterListViewActions {
 
+    private val fetchCharactersList = MutableLiveData<Unit>()
 
-    private val characterListing = runInScope { getCharactersUseCase() }
+    private val characterResourceList: LiveData<Resource<List<Character>>> =
+            Transformations.switchMap(fetchCharactersList) {
+                runInScope { getCharactersUseCase() }
+            }
 
-    private val characterList: LiveData<PagedList<Character>> = characterListing.pagedList
-    private val networkState: LiveData<Resource<Unit>> = characterListing.networkState
     private val refreshNetworkState = MediatorLiveData<Resource<Unit>>()
 
     private val _viewState = ViewStateLiveData(CharacterListViewState())
@@ -45,26 +52,26 @@ import javax.inject.Inject
 
 
     init {
-        _viewState.addNewStateSource(characterList) {
-            copy(charactersList = it)
-        }
-
-        _viewState.addNewStateSource(networkState) {
-            val isLoading = charactersList?.isEmpty() ?: true && it is ResourceLoading
+        _viewState.addNewStateSource(characterResourceList) {
+            val isEmptyState = it.data?.isEmpty() != false
+            val isLoading = isEmptyState && it is ResourceLoading
             val errorMessage =
-                    if (it is ResourceError && charactersList?.isEmpty() != false) {
+                    if (it is ResourceError && isEmptyState) {
                         it.error?.toString() ?: ""
                     } else {
                         null
                     }
-            copy(isLoading = isLoading, errorMessage = errorMessage)
+            copy(
+                    charactersList = it.data,
+                    isLoading = isLoading,
+                    errorMessage = errorMessage)
         }
 
         _viewState.addNewStateSource(refreshNetworkState) {
             copy(isRefreshing = it is ResourceLoading)
         }
 
-        _errorMessage.addSource(networkState) { stateResource ->
+        _errorMessage.addSource(characterResourceList) { stateResource ->
             if (stateResource is ResourceError) {
                 _errorMessage.value = Event(SnackbarMessage(R.string.default_error_message))
             }
@@ -75,7 +82,7 @@ import javax.inject.Inject
                 _errorMessage.value = Event(SnackbarMessage(R.string.default_error_message))
             }
         }
-
+        fetchCharactersList.value = Unit
     }
 
     override fun openCharacter(id: Long) {
@@ -83,7 +90,7 @@ import javax.inject.Inject
     }
 
     override fun retry() {
-        characterListing.retryAction()
+        fetchCharactersList.value = Unit
     }
 
     override fun refresh() {
@@ -92,16 +99,8 @@ import javax.inject.Inject
         } else {
             refreshNetworkState.value = ResourceLoading()
         }
-
-        runInScope { refreshCharactersUseCase(Unit) }.also { refreshLiveData ->
-            with(refreshNetworkState) {
-                addSource(refreshLiveData) {
-                    value = it
-                    if (it is ResourceSuccess || it is ResourceError) {
-                        removeSource(refreshLiveData)
-                    }
-                }
-            }
+        launch(appDispatchers.Main) {
+            refreshNetworkState.value = refreshCharactersUseCase(Unit).toResource()
         }
     }
 }

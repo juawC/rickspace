@@ -5,27 +5,28 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingComponent
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import com.app.juawcevada.rickspace.R
 import com.app.juawcevada.rickspace.databinding.CharacterItemBinding
 import com.app.juawcevada.rickspace.model.Character
-import com.app.juawcevada.rickspace.model.Location
-import com.app.juawcevada.rickspace.model.Origin
-import com.app.juawcevada.rickspace.ui.shared.PagedRecyclerAdapter
+import com.app.juawcevada.rickspace.ui.shared.ListRecyclerAdapter
 
 
 class CharacterListAdapter(
         private val dataBindingComponent: DataBindingComponent,
         private val onCharacterSelected: (Character) -> Unit
-) : PagedRecyclerAdapter<Character, CharacterItemBinding>(CharacterDiff()) {
+) : ListRecyclerAdapter<Character, CharacterItemBinding>() {
+
+    override val differ: AsyncListDiffer<Character> = AsyncListDiffer(this, CharacterDiff())
 
     private val onClickListener: View.OnClickListener = View.OnClickListener {
         val character: Character = it.tag as Character
         onCharacterSelected(character)
     }
 
-    override fun bind(binding: CharacterItemBinding, item: Character?) {
-        binding.character = item ?: createCharacterPlaceHolder()
+    override fun bind(binding: CharacterItemBinding, item: Character) {
+        binding.character = item
         binding.root.apply {
             tag = item
             setOnClickListener(onClickListener)
@@ -46,20 +47,5 @@ class CharacterListAdapter(
     class CharacterDiff : DiffUtil.ItemCallback<Character>() {
         override fun areItemsTheSame(old: Character, new: Character) = old.id == new.id
         override fun areContentsTheSame(old: Character, new: Character) = old == new
-    }
-
-    companion object {
-        fun createCharacterPlaceHolder() =
-                Character(0,
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        Origin("", ""),
-                        Location("", ""),
-                        "",
-                        emptyList(),
-                        "")
     }
 }

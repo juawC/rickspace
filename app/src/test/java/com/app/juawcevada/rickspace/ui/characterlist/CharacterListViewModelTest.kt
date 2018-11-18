@@ -2,19 +2,18 @@ package com.app.juawcevada.rickspace.ui.characterlist
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
-import androidx.paging.PagedList
+import arrow.core.Try
 import com.app.juawcevada.rickspace.R
 import com.app.juawcevada.rickspace.data.shared.repository.*
+import com.app.juawcevada.rickspace.dispatchers.AppDispatchers
 import com.app.juawcevada.rickspace.domain.character.GetCharactersUseCase
 import com.app.juawcevada.rickspace.domain.character.RefreshCharactersUseCase
 import com.app.juawcevada.rickspace.model.Character
-import com.app.juawcevada.rickspace.util.TestDataSourceFactory
+import com.app.juawcevada.rickspace.util.addStubs
 import com.app.juawcevada.rickspace.util.builder.character
 import com.app.juawcevada.rickspace.util.observeTest
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.*
+import kotlinx.coroutines.Dispatchers
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -26,41 +25,43 @@ class CharacterListViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var listing: Listing<Character>
-    private lateinit var refreshNetworkState: MutableLiveData<Resource<Unit>>
     private lateinit var viewModel: CharacterListViewModel
-    private lateinit var listingRetryAction: () -> Unit
-    private lateinit var listingPagedList: MutableLiveData<PagedList<Character>>
-    private lateinit var listingNetworkState: MutableLiveData<Resource<Unit>>
+    private lateinit var charactersList: MutableLiveData<Resource<List<Character>>>
+    private lateinit var refreshUseCase: RefreshCharactersUseCase
+    private lateinit var getUseCase: GetCharactersUseCase
 
+    private val appTestDispatchers =
+            AppDispatchers(
+                    Dispatchers.Unconfined,
+                    Dispatchers.Unconfined,
+                    Dispatchers.Unconfined)
 
     @Before
     fun initViewModel() {
-        listingRetryAction = mock()
-        listingPagedList = MutableLiveData()
-        listingNetworkState = MutableLiveData()
-        refreshNetworkState = MutableLiveData()
 
-        listing = Listing(listingPagedList, listingNetworkState, listingRetryAction)
+        charactersList = MutableLiveData()
 
-        val getUseCase: GetCharactersUseCase = mock {
-            on { invoke(any()) } doReturn { listing }
+        getUseCase = mock {
+            on { invoke() } doReturn { charactersList }
         }
-        val refreshUseCase: RefreshCharactersUseCase = mock {
-            on { invoke(any()) } doReturn { refreshNetworkState }
+        refreshUseCase = mock {
+            onBlocking { invoke(any()) } doReturn Try.Success(Unit)
         }
 
-        viewModel = CharacterListViewModel(getUseCase, refreshUseCase).apply {
-            viewState.observeTest()
-            errorMessage.observeTest()
-            navigationAction.observeTest()
-        }
+        viewModel =
+                CharacterListViewModel(
+                        getUseCase,
+                        refreshUseCase,
+                        appTestDispatchers).apply {
+                    viewState.observeTest()
+                    errorMessage.observeTest()
+                    navigationAction.observeTest()
+                }
     }
 
     @Test
     fun loadingEmptyList() {
-        listingPagedList.value = TestDataSourceFactory().buildPagedList()
-        listingNetworkState.value = ResourceLoading()
+        charactersList.value = ResourceLoading(data= emptyList())
 
         with(viewModel.viewState.value!!) {
             assertEquals(emptyList<Character>(), charactersList)
@@ -81,8 +82,7 @@ class CharacterListViewModelTest {
     @Test
     fun loadingNotEmptyList() {
         val characters = mutableListOf(character {})
-        listingPagedList.value = TestDataSourceFactory(characters).buildPagedList()
-        listingNetworkState.value = ResourceLoading()
+        charactersList.value = ResourceSuccess(characters)
 
         with(viewModel.viewState.value!!) {
             assertEquals(characters, charactersList)
@@ -103,8 +103,7 @@ class CharacterListViewModelTest {
     @Test
     fun successList() {
         val characters = mutableListOf(character {})
-        listingPagedList.value = TestDataSourceFactory(characters).buildPagedList()
-        listingNetworkState.value = ResourceSuccess()
+        charactersList.value = ResourceSuccess(characters)
 
         with(viewModel.viewState.value!!) {
             assertEquals(characters, charactersList)
@@ -125,8 +124,7 @@ class CharacterListViewModelTest {
     @Test
     fun errorListNotEmpty() {
         val characters = mutableListOf(character {})
-        listingPagedList.value = TestDataSourceFactory(characters).buildPagedList()
-        listingNetworkState.value = ResourceError(error = NullPointerException())
+        charactersList.value = ResourceError(characters, NullPointerException())
 
         with(viewModel.viewState.value!!) {
             assertEquals(characters, charactersList)
@@ -146,8 +144,7 @@ class CharacterListViewModelTest {
 
     @Test
     fun errorListEmpty() {
-        listingPagedList.value = TestDataSourceFactory().buildPagedList()
-        listingNetworkState.value = ResourceError(error = NullPointerException())
+        charactersList.value = ResourceError(emptyList(), NullPointerException())
 
         with(viewModel.viewState.value!!) {
             assertEquals(emptyList<Character>(), charactersList)
@@ -168,20 +165,13 @@ class CharacterListViewModelTest {
     @Test
     fun refreshListSuccess() {
         val characters = mutableListOf(character {})
-        listingPagedList.value = TestDataSourceFactory(characters).buildPagedList()
-        listingNetworkState.value = ResourceSuccess()
+        charactersList.value = ResourceSuccess(characters)
 
-        viewModel.refresh()
-        refreshNetworkState.value = ResourceLoading()
-
-        with(viewModel.viewState.value!!) {
-            assertEquals(characters, charactersList)
-            assertEquals(false, isLoading)
-            assertEquals(true, isRefreshing)
-            assertNull(errorMessage)
+        refreshUseCase.addStubs {
+            onBlocking { invoke(Unit) } doReturn Try.Success(Unit)
         }
 
-        refreshNetworkState.value = ResourceSuccess()
+        viewModel.refresh()
 
         with(viewModel.viewState.value!!) {
             assertEquals(characters, charactersList)
@@ -202,11 +192,12 @@ class CharacterListViewModelTest {
     @Test
     fun refreshListError() {
         val characters = mutableListOf(character {})
-        listingPagedList.value = TestDataSourceFactory(characters).buildPagedList()
-        listingNetworkState.value = ResourceSuccess()
+        charactersList.value = ResourceSuccess(characters)
+        refreshUseCase.addStubs {
+            onBlocking { invoke(Unit) } doReturn Try.Failure(NullPointerException())
+        }
 
         viewModel.refresh()
-        refreshNetworkState.value = ResourceError(error = NullPointerException())
 
         with(viewModel.viewState.value!!) {
             assertEquals(characters, charactersList)
@@ -228,7 +219,48 @@ class CharacterListViewModelTest {
     @Test
     fun retryAction() {
         viewModel.retry()
-        verify(listingRetryAction).invoke()
+
+        charactersList.value = ResourceError(emptyList(), NullPointerException())
+
+        with(viewModel.viewState.value!!) {
+            assertEquals(emptyList<Character>(), charactersList)
+            assertEquals(false, isLoading)
+            assertEquals(false, isRefreshing)
+            assertEquals("java.lang.NullPointerException", errorMessage)
+        }
+
+        with(viewModel.errorMessage.value!!) {
+            assertEquals(R.string.default_error_message, getContentIfNotHandled()!!.messageId)
+        }
+
+        with(viewModel.navigationAction.value) {
+            assertNull(this)
+        }
+
+        // Re-setup use case for reuse
+        val characters = mutableListOf(character {})
+        val retryCharactersList = MutableLiveData<Resource<List<Character>>>().apply {
+            value = ResourceSuccess(characters)
+        }
+
+        whenever(getUseCase.invoke()) doReturn {retryCharactersList}
+
+        viewModel.retry()
+
+        with(viewModel.viewState.value!!) {
+            assertEquals(characters, charactersList)
+            assertEquals(false, isLoading)
+            assertEquals(false, isRefreshing)
+            assertNull(errorMessage)
+        }
+
+        with(viewModel.errorMessage.value!!) {
+            assertNull(getContentIfNotHandled())
+        }
+
+        with(viewModel.navigationAction.value) {
+            assertNull(this)
+        }
     }
 
 

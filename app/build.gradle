@@ -36,6 +36,9 @@ android {
         androidTest.java.srcDirs += "src/test-common/java"
         test.java.srcDirs += "src/test-common/java"
     }
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+    }
 }
 
 configurations.all {
@@ -50,7 +53,7 @@ configurations.all {
 }
 
 dependencies {
-    def nav_version = "1.0.0-alpha06"
+    def nav_version = "1.0.0-alpha07"
     def dagger_version = "2.16"
     def retrofit_version = "2.4.0"
     def glide_version = "4.8.0"
@@ -64,7 +67,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0-RC1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.0.0-RC1'
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'androidx.paging:paging-common:2.0.0'
@@ -99,6 +102,7 @@ dependencies {
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0-RC3'
     testImplementation "android.arch.core:core-testing:1.1.1"
     testImplementation 'androidx.test:core:1.0.0'
+    androidTestUtil 'androidx.test:orchestrator:1.1.0'
     androidTestImplementation 'androidx.test:runner:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
     androidTestImplementation 'androidx.test.ext:junit:1.0.0'

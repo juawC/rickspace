@@ -1,9 +1,12 @@
 package com.app.juawcevada.rickspace.ui
 
+import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
+import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.rule.ActivityTestRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.app.juawcevada.rickspace.testing.SingleFragmentActivity
 import com.app.juawcevada.rickspace.ui.charaterdetail.CharacterDetailFragment
 import com.app.juawcevada.rickspace.ui.charaterdetail.CharacterDetailViewModel
@@ -23,15 +26,11 @@ import com.app.juawcevada.rickspace.util.checkThatMatches
 import com.app.juawcevada.rickspace.util.createTestFactory
 import com.app.juawcevada.rickspace.util.onRecyclerViewPosition
 import com.app.juawcevada.rickspace.R
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class CharacterDetailFragmentTest {
 
-    @get:Rule
-    val activityRule =
-            ActivityTestRule(
-                    SingleFragmentActivity::class.java,
-                    true,
-                    true)
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -41,7 +40,8 @@ class CharacterDetailFragmentTest {
     private lateinit var fragment: CharacterDetailFragment
 
     @Before
-    fun initViewModel() {
+    fun setUp() {
+        val activityScenario = ActivityScenario.launch(SingleFragmentActivity::class.java)
         viewState = MutableLiveData()
         fragment = CharacterDetailFragment().apply {
             arguments = CharacterDetailFragmentArgs.Builder(1).build().toBundle()
@@ -57,7 +57,9 @@ class CharacterDetailFragmentTest {
             override fun getFragmentBindingAdapters() = mock<FragmentBindingAdapters>()
         }
 
-        activityRule.activity.replaceFragment(fragment)
+        activityScenario.onActivity {
+            it.replaceFragment(fragment)
+        }
     }
 
     @Test
@@ -91,5 +93,5 @@ class CharacterDetailFragmentTest {
     }
 
     private fun getEpisodeString(episodeNumber: Long) =
-            activityRule.activity.getString(R.string.episode_number, episodeNumber)
+            getApplicationContext<Application>().getString(R.string.episode_number, episodeNumber)
 }

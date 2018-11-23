@@ -3,6 +3,7 @@ package com.app.juawcevada.rickspace.ui
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
+import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.swipeDown
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -26,14 +27,8 @@ import com.app.juawcevada.rickspace.util.*
 import com.app.juawcevada.rickspace.util.builder.character
 import com.nhaarman.mockitokotlin2.verify
 
+@RunWith(AndroidJUnit4::class)
 class CharacterListFragmentTest {
-
-    @get:Rule
-    val activityRule =
-            ActivityTestRule(
-                    SingleFragmentActivity::class.java,
-                    true,
-                    true)
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -45,7 +40,9 @@ class CharacterListFragmentTest {
     private lateinit var fragment: CharacterListFragmentMockNavigation
 
     @Before
-    fun initViewModel() {
+    fun setUp() {
+        val activityScenario = ActivityScenario.launch(SingleFragmentActivity::class.java)
+
         navigationAction = MutableLiveData()
         errorMessage = MutableLiveData()
         viewState = MutableLiveData()
@@ -63,8 +60,9 @@ class CharacterListFragmentTest {
             override fun getFragmentBindingAdapters() = mock<FragmentBindingAdapters>()
         }
 
-        activityRule.activity.replaceFragment(fragment)
-
+        activityScenario.onActivity {
+            it.replaceFragment(fragment)
+        }
     }
 
     @Test

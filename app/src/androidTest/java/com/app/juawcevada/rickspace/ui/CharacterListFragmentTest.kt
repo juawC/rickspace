@@ -8,7 +8,6 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.swipeDown
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.rule.ActivityTestRule
 import com.app.juawcevada.rickspace.event.Event
 import com.app.juawcevada.rickspace.testing.SingleFragmentActivity
 import com.app.juawcevada.rickspace.ui.shared.SnackbarMessage
@@ -38,10 +37,11 @@ class CharacterListFragmentTest {
     private lateinit var errorMessage: MutableLiveData<Event<SnackbarMessage>>
     private lateinit var viewState: MutableLiveData<CharacterListViewState>
     private lateinit var fragment: CharacterListFragmentMockNavigation
+    private lateinit var activityScenario: ActivityScenario<SingleFragmentActivity>
 
     @Before
     fun setUp() {
-        val activityScenario = ActivityScenario.launch(SingleFragmentActivity::class.java)
+        activityScenario = ActivityScenario.launch(SingleFragmentActivity::class.java)
 
         navigationAction = MutableLiveData()
         errorMessage = MutableLiveData()
@@ -60,14 +60,12 @@ class CharacterListFragmentTest {
             override fun getFragmentBindingAdapters() = mock<FragmentBindingAdapters>()
         }
 
-        activityScenario.onActivity {
-            it.replaceFragment(fragment)
-        }
     }
 
     @Test
     fun loading() {
         viewState.value = CharacterListViewState(isLoading = true)
+        startFragment()
 
         spin_kit checkThatMatches isDisplayed()
     }
@@ -76,6 +74,7 @@ class CharacterListFragmentTest {
     fun error() {
         val errorMessage = "Oops universe not found!"
         viewState.value = CharacterListViewState(errorMessage = errorMessage)
+        startFragment()
 
         error_text_title checkThatMatches withText(errorMessage)
         error_icon checkThatMatches isDisplayed()
@@ -109,6 +108,7 @@ class CharacterListFragmentTest {
         )
         val characterPagedList = TestDataSourceFactory(charactersList).buildPagedList()
         viewState.value = CharacterListViewState(charactersList = characterPagedList)
+        startFragment()
 
         list onRecyclerViewPosition 0 checkThatMatches all {
             matcher { hasDescendant(withText("Rick")) }
@@ -136,6 +136,7 @@ class CharacterListFragmentTest {
         val characterPagedList = TestDataSourceFactory(charactersList).buildPagedList()
         viewState.value = CharacterListViewState(charactersList = characterPagedList)
         navigationAction.postValue(Event(CharacterListNavigationActions.OpenCharacterDetail(1)))
+        startFragment()
 
         list onRecyclerViewPosition 0 perform click()
 
@@ -155,6 +156,7 @@ class CharacterListFragmentTest {
 
         val characterPagedList = TestDataSourceFactory(charactersList).buildPagedList()
         viewState.value = CharacterListViewState(charactersList = characterPagedList)
+        startFragment()
 
         swipe_to_refresh perform swipeDown()
 
@@ -166,6 +168,7 @@ class CharacterListFragmentTest {
     fun retry() {
         val errorMessage = "Meeseeks are asleep now!"
         viewState.value = CharacterListViewState(errorMessage = errorMessage)
+        startFragment()
 
         error_retry_button perform click()
 
@@ -177,12 +180,19 @@ class CharacterListFragmentTest {
         val charactersList = mutableListOf(
                 character {}
         )
+        startFragment()
 
         val characterPagedList = TestDataSourceFactory(charactersList).buildPagedList()
         viewState.value = CharacterListViewState(charactersList = characterPagedList)
         errorMessage.value =  Event(SnackbarMessage(R.string.default_error_message))
 
         snackbar_text checkThatMatches withText(R.string.default_error_message)
+    }
+
+    private fun startFragment() {
+        activityScenario.onActivity {
+            it.replaceFragment(fragment)
+        }
     }
 
 

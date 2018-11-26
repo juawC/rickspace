@@ -2,6 +2,7 @@ package com.app.juawcevada.rickspace.ui
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
@@ -31,17 +32,17 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class CharacterDetailFragmentTest {
 
-
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var viewModel: CharacterDetailViewModel
     private lateinit var viewState: MutableLiveData<CharacterDetailViewState>
     private lateinit var fragment: CharacterDetailFragment
+    private lateinit var activityScenario: ActivityScenario<SingleFragmentActivity>
 
     @Before
     fun setUp() {
-        val activityScenario = ActivityScenario.launch(SingleFragmentActivity::class.java)
+        activityScenario = ActivityScenario.launch(SingleFragmentActivity::class.java)
         viewState = MutableLiveData()
         fragment = CharacterDetailFragment().apply {
             arguments = CharacterDetailFragmentArgs.Builder(1).build().toBundle()
@@ -55,10 +56,6 @@ class CharacterDetailFragmentTest {
 
         fragment.fragmentDataBindingComponent = object : FragmentDataBindingComponent(fragment) {
             override fun getFragmentBindingAdapters() = mock<FragmentBindingAdapters>()
-        }
-
-        activityScenario.onActivity {
-            it.replaceFragment(fragment)
         }
     }
 
@@ -82,6 +79,9 @@ class CharacterDetailFragmentTest {
                             episode { "3" }
                         }
                 )
+
+        startFragment()
+
         charName checkThatMatches withText("Rick")
         charOrigin checkThatMatches withText("Another Earth")
         charLocation checkThatMatches withText("Earth")
@@ -91,6 +91,13 @@ class CharacterDetailFragmentTest {
         episodesList onRecyclerViewPosition 1 checkThatMatches withText(getEpisodeString(2))
         episodesList onRecyclerViewPosition 2 checkThatMatches withText(getEpisodeString(3))
     }
+
+    private fun startFragment() {
+        activityScenario.onActivity {
+            it.replaceFragment(fragment)
+        }
+    }
+
 
     private fun getEpisodeString(episodeNumber: Long) =
             getApplicationContext<Application>().getString(R.string.episode_number, episodeNumber)

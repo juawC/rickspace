@@ -15,7 +15,6 @@ import javax.inject.Singleton
     ConfigsModule::class,
     DBModule::class,
     RepositoriesModule::class,
-    ViewModelModule::class,
     ActivityBuildersModule::class
 ])
 interface AppComponent : AndroidInjector<RickApplication> {

@@ -6,7 +6,7 @@ import com.app.juawcevada.rickspace.model.Character
 import java.util.concurrent.Executor
 
 class TestDataSourceFactory(
-        var charList: MutableList<Character> = mutableListOf()
+        private var charList: MutableList<Character> = mutableListOf()
 ) : DataSource.Factory<Int, Character>() {
 
     override fun create() = TestDataSource(charList)
@@ -22,3 +22,5 @@ class TestDataSourceFactory(
                 .build()
     }
 }
+
+fun MutableList<Character>.toPagedList(): PagedList<Character> = TestDataSourceFactory(this).buildPagedList()

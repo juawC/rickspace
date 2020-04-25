@@ -12,13 +12,16 @@ class ViewStateLiveData<T>(initialState: T) : MediatorLiveData<T>() {
         value = initialState
     }
 
-    fun <S> addNewStateSource(source: LiveData<S>, newStateCreator: T.(S) -> T) {
+    val currentState: T
+        get() = value!!
+
+    fun <S> addNewStateSource(source: LiveData<S>, body: T.(S) -> T) {
         this.addSource(source) {
-            dispatchState { newStateCreator(it) }
+            dispatchState { body(it) }
         }
     }
 
-    private fun dispatchState(newStateCreator: T.() -> T) {
+    fun dispatchState(newStateCreator: T.() -> T) {
         value = value!!.newStateCreator()
     }
 }

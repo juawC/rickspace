@@ -195,7 +195,6 @@ class CharacterListFragmentTest {
         }
     }
 
-
     class CharacterListFragmentMockNavigation: CharacterListFragment() {
         val navController = mock<NavController>()
         override fun navController() = navController

@@ -1,28 +1,30 @@
 package com.app.juawcevada.rickspace.data.character
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Observer
+import androidx.paging.PagedList
 import com.app.juawcevada.rickspace.data.shared.local.AppDatabase
 import com.app.juawcevada.rickspace.data.shared.remote.RickAndMortyService
+import com.app.juawcevada.rickspace.data.shared.repository.Resource
 import com.app.juawcevada.rickspace.data.shared.repository.ResourceError
+import com.app.juawcevada.rickspace.data.shared.repository.ResourceLoading
 import com.app.juawcevada.rickspace.data.shared.repository.ResourceSuccess
 import com.app.juawcevada.rickspace.dispatchers.AppDispatchers
-import com.app.juawcevada.rickspace.util.MockCallError
-import com.app.juawcevada.rickspace.util.MockCallSuccess
+import com.app.juawcevada.rickspace.model.Character
+import com.app.juawcevada.rickspace.util.TestCoroutineRule
 import com.app.juawcevada.rickspace.util.TestDataSourceFactory
-import com.app.juawcevada.rickspace.util.getValueTest
 import com.app.juawcevada.rickspace.util.builder.character
 import com.app.juawcevada.rickspace.util.builder.characterListInfo
 import com.nhaarman.mockitokotlin2.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.toList
 import okhttp3.internal.http.RealResponseBody
 import okio.Buffer
-import org.hamcrest.CoreMatchers.instanceOf
-import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import retrofit2.HttpException
+import retrofit2.Response
 
 @ExperimentalCoroutinesApi
 class CharacterRepositoryTest {
@@ -30,33 +32,53 @@ class CharacterRepositoryTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    @get:Rule
+    val testCoroutineRule = TestCoroutineRule()
+
+
     private val appTestDispatchers =
             AppDispatchers(
-                    Dispatchers.Unconfined,
-                    Dispatchers.Unconfined,
-                    Dispatchers.Unconfined)
+                    testCoroutineRule.testCoroutineDispatcher,
+                    testCoroutineRule.testCoroutineDispatcher,
+                    testCoroutineRule.testCoroutineDispatcher
+            )
 
     @Test
-    fun loadCharactersFirstPage() {
+    fun loadCharactersFirstPagedList() = testCoroutineRule.runBlockingTest {
         val testDataSourceFactory = TestDataSourceFactory()
-        val characterRepository = buildRepository(
-                apiServiceMock = mock {
-                    on { getCharacters() } doReturn MockCallSuccess(characterListInfo {})
-                },
-                characterDaoMock = mock {
-                    on { getAllCharacters() } doReturn testDataSourceFactory
-                    on { getNextIndexCharacter() } doReturn 0
-                })
-
-        runBlocking {
-            val listing = characterRepository.getCharactersData(this)
-            val pagedList = listing.pagedList.getValueTest()!!
-            assertEquals(0, pagedList.size)
+        val apiServiceMock: RickAndMortyService = mock {
+            onBlocking { getCharacters() } doReturn characterListInfo {}
         }
+        val characterDaoMock: CharacterDao = mock {
+            on { getAllCharacters() } doReturn testDataSourceFactory
+            on { getNextIndexCharacter() } doReturn 0
+        }
+        val characterRepository = buildRepository(apiServiceMock, characterDaoMock)
+
+        val listing = characterRepository.getCharactersData()
+
+        val mockObserverPagedList: Observer<PagedList<Character>> = mock()
+        val mockObserverNetworkState: Observer<Resource<Unit>> = mock()
+        listing.pagedList.observeForever(mockObserverPagedList)
+        listing.networkState.observeForever(mockObserverNetworkState)
+
+        inOrder(mockObserverPagedList) {
+            verify(mockObserverPagedList).onChanged(testDataSourceFactory.buildPagedList())
+        }
+        inOrder(mockObserverNetworkState) {
+            verify(mockObserverNetworkState).onChanged(ResourceLoading())
+            verify(mockObserverNetworkState).onChanged(ResourceSuccess())
+        }
+        inOrder(apiServiceMock) {
+            verify(apiServiceMock).getCharacters()
+        }
+
+        listing.pagedList.removeObserver(mockObserverPagedList)
+        listing.networkState.removeObserver(mockObserverNetworkState)
     }
 
     @Test
-    fun loadCharactersNextPage() {
+    fun loadCharactersNextPage() = testCoroutineRule.runBlockingTest {
         val testDataSourceFactory =
                 TestDataSourceFactory(
                         mutableListOf(
@@ -77,76 +99,85 @@ class CharacterRepositoryTest {
                         ))
 
         val apiServiceMock: RickAndMortyService = mock {
-            on { getCharactersByPage(any()) } doReturn MockCallSuccess(characterListInfo {})
+            onBlocking { getCharactersByPage(any()) } doReturn characterListInfo {}
         }
-
         val characterDaoMock: CharacterDao = mock {
             on { getAllCharacters() } doReturn testDataSourceFactory
             on { getNextIndexCharacter() } doReturn 0
         }
-
         val characterRepository = buildRepository(apiServiceMock, characterDaoMock)
 
-        runBlocking {
-            val listing = characterRepository.getCharactersData(this)
-            val pagedList = listing.pagedList.getValueTest()!!
-            assertEquals(10, pagedList.size)
+        val listing = characterRepository.getCharactersData()
+        val mockObserverPagedList: Observer<PagedList<Character>> = mock()
+        val mockObserverNetworkState: Observer<Resource<Unit>> = mock()
+        listing.pagedList.observeForever(mockObserverPagedList)
+        listing.networkState.observeForever(mockObserverNetworkState)
+
+        inOrder(mockObserverPagedList) {
+            verify(mockObserverPagedList).onChanged(testDataSourceFactory.buildPagedList())
+        }
+        inOrder(mockObserverNetworkState) {
+            verify(mockObserverNetworkState).onChanged(ResourceLoading())
+            verify(mockObserverNetworkState).onChanged(ResourceSuccess())
+        }
+        inOrder(apiServiceMock) {
             verify(apiServiceMock).getCharactersByPage(1)
-            verify(characterDaoMock).insertAll(any())
+        }
+
+        listing.pagedList.removeObserver(mockObserverPagedList)
+        listing.networkState.removeObserver(mockObserverNetworkState)
+    }
+
+    @Test
+    fun refreshCharactersData() = testCoroutineRule.runBlockingTest {
+        val apiServiceMock: RickAndMortyService = mock {
+            onBlocking { getCharacters() } doReturn characterListInfo {}
+        }
+        val characterDaoMock: CharacterDao = mock {
+            on { getNextIndexCharacter() } doReturn 0
+        }
+        val characterRepository = buildRepository(apiServiceMock, characterDaoMock)
+
+        val networkStateList = characterRepository.refreshCharactersData().toList()
+
+        assertEquals(
+                listOf(ResourceLoading<Unit>(), ResourceSuccess<Unit>()),
+                networkStateList
+        )
+        inOrder(characterDaoMock) {
+            verify(characterDaoMock).deleteAllCharacters()
+            verify(characterDaoMock).insertAll(emptyList())
         }
     }
 
     @Test
-    fun refreshCharactersData() {
+    fun refreshCharactersError() = testCoroutineRule.runBlockingTest {
+        val errorException = HttpException(createResponseError<CharacterListInfo>(
+                404,
+                RealResponseBody(null, 0, Buffer()))
+        )
         val apiServiceMock: RickAndMortyService = mock {
-            on { getCharacters() } doReturn MockCallSuccess(characterListInfo {})
+            onBlocking { getCharacters() } doThrow errorException
         }
-
         val characterDaoMock: CharacterDao = mock {
             on { getNextIndexCharacter() } doReturn 0
         }
-
         val characterRepository = buildRepository(apiServiceMock, characterDaoMock)
-        runBlocking {
-            val networkState = characterRepository.refreshCharactersData(this)
 
-            assertEquals(ResourceSuccess(Unit), networkState.getValueTest())
-            inOrder(characterDaoMock) {
-                verify(characterDaoMock).deleteAllCharacters()
-                verify(characterDaoMock).insertAll(any())
-            }
-        }
-    }
+        val networkStateList = characterRepository.refreshCharactersData().toList()
 
-    @Test
-    fun refreshCharactersError() {
-        val errorResponse =
-                MockCallError<CharacterListInfo>(
-                        404,
-                        RealResponseBody(null, 0, Buffer()))
-
-        val apiServiceMock: RickAndMortyService = mock {
-            on { getCharacters() } doReturn errorResponse
-        }
-
-        val characterDaoMock: CharacterDao = mock {
-            on { getNextIndexCharacter() } doReturn 0
-        }
-
-        val characterRepository = buildRepository(apiServiceMock, characterDaoMock)
-        runBlocking {
-            val networkState = characterRepository.refreshCharactersData(this)
-
-            assertThat(networkState.getValueTest(), instanceOf(ResourceError<Unit>()::class.java))
-            verify(characterDaoMock, never()).deleteAllCharacters()
-            verify(characterDaoMock, never()).insertAll(any())
-        }
+        assertEquals(
+                listOf(ResourceLoading<Unit>(), ResourceError<Unit>(error = errorException)),
+                networkStateList
+        )
+        verify(characterDaoMock, never()).deleteAllCharacters()
+        verify(characterDaoMock, never()).insertAll(emptyList())
     }
 
 
     private fun buildRepository(
-            apiServiceMock: RickAndMortyService = mock(),
-            characterDaoMock: CharacterDao = mock()): CharacterRepository {
+        apiServiceMock: RickAndMortyService = mock(),
+        characterDaoMock: CharacterDao = mock()): CharacterRepository {
 
         val appDatabaseMock: AppDatabase = mock {
             on { characterDao() } doReturn characterDaoMock
@@ -162,4 +193,8 @@ class CharacterRepositoryTest {
                 10,
                 appTestDispatchers)
     }
+
+    private fun <T> createResponseError(
+        code: Int, body: okhttp3.ResponseBody
+    ): Response<T> = Response.error<T>(code, body)
 }

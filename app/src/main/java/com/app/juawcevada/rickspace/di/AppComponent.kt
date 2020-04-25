@@ -1,6 +1,8 @@
 package com.app.juawcevada.rickspace.di
 
-import com.app.juawcevada.rickspace.Application
+import android.content.Context
+import com.app.juawcevada.rickspace.RickApplication
+import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
@@ -9,7 +11,6 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [
     AndroidSupportInjectionModule::class,
-    ApplicationModule::class,
     ApiModule::class,
     ConfigsModule::class,
     DBModule::class,
@@ -17,8 +18,10 @@ import javax.inject.Singleton
     ViewModelModule::class,
     ActivityBuildersModule::class
 ])
-interface AppComponent : AndroidInjector<Application> {
+interface AppComponent : AndroidInjector<RickApplication> {
 
-    @Component.Builder
-    abstract class Builder : AndroidInjector.Builder<Application>()
+    @Component.Factory
+    interface Factory {
+        fun create(@BindsInstance applicationContext: Context): AppComponent
+    }
 }

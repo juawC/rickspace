@@ -34,7 +34,7 @@ abstract class PagedRecyclerAdapter<DataType, BindingType : ViewDataBinding>(
 
     protected abstract fun createBinding(parent: ViewGroup): BindingType
 
-    class ViewHolder<out DataType : ViewDataBinding>(
-            val binding: DataType
+    class ViewHolder<out BindingType : ViewDataBinding>(
+            val binding: BindingType
     ) : RecyclerView.ViewHolder(binding.root)
 }

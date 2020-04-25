@@ -36,7 +36,7 @@ class ApiModule {
     @Singleton
     internal fun provideOkHttpClient(): OkHttpClient {
         val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BASIC
+            level = HttpLoggingInterceptor.Level.BODY
         }
 
         return OkHttpClient.Builder().addInterceptor(logging).build()

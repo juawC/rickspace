@@ -1,31 +1,30 @@
 package com.app.juawcevada.rickspace.data.character
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.app.juawcevada.rickspace.data.shared.local.AppDatabase
 import com.app.juawcevada.rickspace.data.shared.remote.RickAndMortyService
 import com.app.juawcevada.rickspace.data.shared.repository.*
 import com.app.juawcevada.rickspace.dispatchers.AppDispatchers
+import com.app.juawcevada.rickspace.extensions.runInTransactionSuspended
 import com.app.juawcevada.rickspace.model.Character
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import ru.gildor.coroutines.retrofit.Result
-import ru.gildor.coroutines.retrofit.awaitResult
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
 
 class CharacterRepository(
-        private val appDatabase: AppDatabase,
-        private val apiService: RickAndMortyService,
-        private val itemsByPage: Int,
-        private val appDispatchers: AppDispatchers
+    private val appDatabase: AppDatabase,
+    private val apiService: RickAndMortyService,
+    private val itemsByPage: Int,
+    private val appDispatchers: AppDispatchers
 ) {
 
     private fun insertResultDb(response: CharacterListInfo) {
-
         response.results.let { characters ->
-            appDatabase.runInTransaction {
+            appDatabase.runInTransaction() {
                 // Update items with a calculated indexInResponse
                 val start = appDatabase.characterDao().getNextIndexCharacter()
                 val charactersUpdated = characters.mapIndexed { index, character ->
@@ -40,76 +39,56 @@ class CharacterRepository(
     }
 
     fun loadCharactersNextPage(
-            coroutineScope: CoroutineScope,
-            lastCharacter: Character
-    ): LiveData<Resource<Unit>> {
-        val networkState = MutableLiveData<Resource<Unit>>()
+        lastCharacter: Character
+    ): Flow<Resource<Unit>> = flow {
         if (!lastCharacter.hasNextPage()) {
-            networkState.postValue(ResourceSuccess())
+            emit(ResourceSuccess())
         } else {
-            networkState.postValue(ResourceLoading())
-
-            coroutineScope.launch(appDispatchers.IO) {
-                val result: Result<CharacterListInfo> =
-                        apiService.getCharactersByPage(lastCharacter.nextPage).awaitResult().apply {
-                            doOnSuccess {
-                                try {
-                                    appDatabase.runInTransaction {
-                                        insertResultDb(it)
-                                        networkState.postValue(ResourceSuccess())
-                                    }
-                                } catch (exception: Exception) {
-                                    networkState.postValue(ResourceError())
-                                    Timber.e(exception)
-                                }
-                            }
-                        }
-                networkState.postValue(result.toResource().map { Unit })
-            }
-        }
-        return networkState
-    }
-
-    fun loadCharactersFirstPage(coroutineScope: CoroutineScope): LiveData<Resource<Unit>> {
-        val networkState = MutableLiveData<Resource<Unit>>()
-        networkState.postValue(ResourceLoading())
-
-        coroutineScope.launch(appDispatchers.IO) {
-            val result: Result<CharacterListInfo> = apiService.getCharacters().awaitResult().apply {
-                doOnSuccess {
-                    insertResultDb(it)
-                    networkState.postValue(ResourceSuccess())
+            emit(ResourceLoading())
+            try {
+                val result = apiService.getCharactersByPage(lastCharacter.nextPage)
+                appDatabase.runInTransactionSuspended(appDispatchers.IO) {
+                    insertResultDb(result)
                 }
+                emit(ResourceSuccess())
+            } catch (exception: Exception) {
+                emit(ResourceError(error = exception))
+                Timber.e(exception)
             }
-            networkState.postValue(result.toResource().map { Unit })
         }
-        return networkState
     }
 
-    fun refreshCharactersData(coroutineScope: CoroutineScope): LiveData<Resource<Unit>> {
-        Timber.d("Refreshing characters...")
-        val networkState = MutableLiveData<Resource<Unit>>()
-        networkState.postValue(ResourceLoading())
-
-        coroutineScope.launch(appDispatchers.IO) {
-            val result: Result<CharacterListInfo> =
-                    apiService.getCharacters().awaitResult().apply {
-                        doOnSuccess {
-                            appDatabase.runInTransaction {
-                                appDatabase.characterDao().deleteAllCharacters()
-                                insertResultDb(it)
-                                networkState.postValue(ResourceSuccess())
-                            }
-                        }
-                    }
-            networkState.postValue(result.toResource().map { Unit })
+    fun loadCharactersFirstPage(): Flow<Resource<Unit>> = flow {
+        emit(ResourceLoading())
+        try {
+            val result = apiService.getCharacters()
+            appDatabase.runInTransactionSuspended(appDispatchers.IO) {
+                insertResultDb(result)
+            }
+            emit(ResourceSuccess())
+        } catch (exception: Exception) {
+            emit(ResourceError(error = exception))
+            Timber.e(exception)
         }
-        return networkState
     }
 
-    fun getCharactersData(coroutineScope: CoroutineScope): Listing<Character> {
-        Timber.d("Loading characters...")
 
+    fun refreshCharactersData(): Flow<Resource<Unit>> = flow {
+        emit(ResourceLoading())
+        try {
+            val result = apiService.getCharacters()
+            appDatabase.runInTransactionSuspended(appDispatchers.IO) {
+                appDatabase.characterDao().deleteAllCharacters()
+                insertResultDb(result)
+            }
+            emit(ResourceSuccess())
+        } catch (exception: Exception) {
+            emit(ResourceError(error = exception))
+            Timber.e(exception)
+        }
+    }
+
+    fun getCharactersData(): Listing<Character> {
         val pagingConfig =
                 PagedList
                         .Config.Builder()
@@ -117,7 +96,7 @@ class CharacterRepository(
                         .setPrefetchDistance(itemsByPage)
                         .setEnablePlaceholders(true)
                         .build()
-        val boundaryCallback = CharacterBoundaryCallback(coroutineScope, this)
+        val boundaryCallback = CharacterBoundaryCallback(this)
         val dataSourceFactory = appDatabase.characterDao().getAllCharacters()
         val pagingBuilder =
                 LivePagedListBuilder(dataSourceFactory, pagingConfig)

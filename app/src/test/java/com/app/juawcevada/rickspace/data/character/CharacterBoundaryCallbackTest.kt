@@ -9,7 +9,6 @@ import org.junit.Test
 @Suppress("UNCHECKED_CAST")
 class CharacterBoundaryCallbackTest {
 
-
     @Test
     fun onZeroItemsLoaded() {
         val repositoryMock: CharacterRepository = mock()
@@ -17,7 +16,7 @@ class CharacterBoundaryCallbackTest {
 
         characterBoundaryCallBack.onZeroItemsLoaded()
 
-        verify(repositoryMock).loadCharactersFirstPage(any())
+        verify(repositoryMock).loadCharactersFirstPage()
     }
 
     @Test
@@ -28,7 +27,7 @@ class CharacterBoundaryCallbackTest {
 
         characterBoundaryCallBack.onItemAtEndLoaded(character)
 
-        verify(repositoryMock).loadCharactersNextPage(any(), eq(character))
+        verify(repositoryMock).loadCharactersNextPage(eq(character))
     }
 
 
@@ -43,7 +42,7 @@ class CharacterBoundaryCallbackTest {
             }
         }
 
-        return CharacterBoundaryCallback(mock(), characterRepository, singleResourceLoader
+        return CharacterBoundaryCallback(characterRepository, singleResourceLoader
         )
     }
 }

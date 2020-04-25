@@ -27,7 +27,7 @@ class CharacterDetailFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         AndroidSupportInjection.inject(this)
 
-        val characterId = CharacterDetailFragmentArgs.fromBundle(arguments).characterId
+        val characterId = CharacterDetailFragmentArgs.fromBundle(requireArguments()).characterId
 
         viewModel = viewModelProvider(viewModelFactory)
         viewModel.setCharacterId(characterId)
@@ -39,7 +39,7 @@ class CharacterDetailFragment : Fragment() {
                                 container,
                                 false,
                                 fragmentDataBindingComponent).also {
-                            it.setLifecycleOwner(this)
+                            it.lifecycleOwner = this
                             it.episodesList.adapter = CharacterEpisodesAdapter()
                             it.viewModel = viewModel
                         }

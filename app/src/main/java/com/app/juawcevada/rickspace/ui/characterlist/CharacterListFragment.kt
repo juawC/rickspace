@@ -31,7 +31,7 @@ class CharacterListFragment : Fragment() {
 
     private lateinit var viewModel: CharacterListViewModel
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         AndroidSupportInjection.inject(this)
     }
@@ -50,7 +50,7 @@ class CharacterListFragment : Fragment() {
 
         val binding: CharacterListFragmentBinding =
                 CharacterListFragmentBinding.inflate(inflater, container, false).also {
-                    it.setLifecycleOwner(this)
+                    it.lifecycleOwner = this
                     it.viewModel = viewModel
                     it.viewActions = viewModel
                     it.list.apply {

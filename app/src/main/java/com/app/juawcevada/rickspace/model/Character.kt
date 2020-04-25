@@ -3,9 +3,11 @@ package com.app.juawcevada.rickspace.model
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.squareup.moshi.JsonClass
 
 
 @Entity
+@JsonClass(generateAdapter = true)
 data class Character(
         @PrimaryKey
         val id: Long,

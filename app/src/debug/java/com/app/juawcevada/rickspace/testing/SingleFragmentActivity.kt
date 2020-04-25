@@ -7,12 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.app.juawcevada.rickspace.R
 import dagger.android.AndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
+import dagger.android.HasAndroidInjector
 
-class SingleFragmentActivity : AppCompatActivity(), HasSupportFragmentInjector {
+class SingleFragmentActivity : AppCompatActivity(), HasAndroidInjector {
 
-
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> {
+    override fun androidInjector(): AndroidInjector<Any> {
         // Skip dagger inject
         return AndroidInjector {}
     }

@@ -8,10 +8,10 @@ import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
 class GetCharactersUseCase @Inject constructor(
-        private val repository: CharacterRepository
+    private val repository: CharacterRepository
 ) : UseCase<Unit, Listing<Character>>() {
 
-    override fun execute(coroutineScope: CoroutineScope, parameters: Unit): Listing<Character> {
-        return repository.getCharactersData(coroutineScope)
+    override fun execute(parameters: Unit): Listing<Character> {
+        return repository.getCharactersData()
     }
 }

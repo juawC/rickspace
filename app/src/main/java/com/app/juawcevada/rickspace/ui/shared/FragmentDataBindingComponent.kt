@@ -9,7 +9,8 @@ import javax.inject.Inject
  * Component to set fragment binding adapters.
  */
 
-@OpenClassOnDebug class FragmentDataBindingComponent @Inject
+@OpenClassOnDebug
+class FragmentDataBindingComponent @Inject
 constructor(private val fragment: Fragment) : DataBindingComponent {
 
 

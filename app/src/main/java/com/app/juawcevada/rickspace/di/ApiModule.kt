@@ -20,8 +20,8 @@ class ApiModule {
     @Provides
     @Singleton
     internal fun provideApi(
-            @ApiConfig url: String,
-            okHttpClient: OkHttpClient): RickAndMortyService {
+        @ApiConfig url: String,
+        okHttpClient: OkHttpClient): RickAndMortyService {
 
         val retrofit = Retrofit.Builder()
                 .callFactory(okHttpClient)

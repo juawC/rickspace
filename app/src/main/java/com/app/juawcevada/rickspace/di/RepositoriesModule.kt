@@ -15,9 +15,9 @@ class RepositoriesModule {
     @Singleton
     @Provides
     internal fun provideCharacterRepository(
-            appDatabase: AppDatabase,
-            apiService: RickAndMortyService,
-            @DBConfig itemsByPage: Int,
-            appDispatchers: AppDispatchers
+        appDatabase: AppDatabase,
+        apiService: RickAndMortyService,
+        @DBConfig itemsByPage: Int,
+        appDispatchers: AppDispatchers
     ) = CharacterRepository(appDatabase, apiService, itemsByPage, appDispatchers)
 }

@@ -2,31 +2,34 @@ package com.app.juawcevada.rickspace.ui
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.app.juawcevada.rickspace.R
+import com.app.juawcevada.rickspace.R.id.charLocation
+import com.app.juawcevada.rickspace.R.id.charName
+import com.app.juawcevada.rickspace.R.id.charOrigin
+import com.app.juawcevada.rickspace.R.id.charSpecies
+import com.app.juawcevada.rickspace.R.id.episodesList
 import com.app.juawcevada.rickspace.testing.SingleFragmentActivity
 import com.app.juawcevada.rickspace.ui.charaterdetail.CharacterDetailFragment
+import com.app.juawcevada.rickspace.ui.charaterdetail.CharacterDetailFragmentArgs
 import com.app.juawcevada.rickspace.ui.charaterdetail.CharacterDetailViewModel
 import com.app.juawcevada.rickspace.ui.charaterdetail.CharacterDetailViewState
+import com.app.juawcevada.rickspace.ui.shared.FragmentBindingAdapters
+import com.app.juawcevada.rickspace.ui.shared.FragmentDataBindingComponent
 import com.app.juawcevada.rickspace.util.builder.character
 import com.app.juawcevada.rickspace.util.builder.episodes
+import com.app.juawcevada.rickspace.util.checkThatMatches
+import com.app.juawcevada.rickspace.util.createTestFactory
+import com.app.juawcevada.rickspace.util.onRecyclerViewPosition
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import com.app.juawcevada.rickspace.R.id.*
-import com.app.juawcevada.rickspace.ui.charaterdetail.CharacterDetailFragmentArgs
-import com.app.juawcevada.rickspace.ui.shared.FragmentBindingAdapters
-import com.app.juawcevada.rickspace.ui.shared.FragmentDataBindingComponent
-import com.app.juawcevada.rickspace.util.checkThatMatches
-import com.app.juawcevada.rickspace.util.createTestFactory
-import com.app.juawcevada.rickspace.util.onRecyclerViewPosition
-import com.app.juawcevada.rickspace.R
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)

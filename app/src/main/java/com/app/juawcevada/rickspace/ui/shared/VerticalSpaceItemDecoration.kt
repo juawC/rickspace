@@ -7,10 +7,10 @@ import androidx.annotation.DimenRes
 import androidx.recyclerview.widget.RecyclerView
 
 class VerticalSpaceItemDecoration(
-        private val context: Context,
-        @DimenRes private val height: Int,
-        private val includeTop: Boolean = false,
-        private val includeBottom: Boolean = false
+    private val context: Context,
+    @DimenRes private val height: Int,
+    private val includeTop: Boolean = false,
+    private val includeBottom: Boolean = false
 ) : RecyclerView.ItemDecoration() {
 
     private val heightPx: Int by lazy {

@@ -5,15 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.app.juawcevada.rickspace.domain.character.GetCharacterUseCase
 import com.app.juawcevada.rickspace.model.Character
-import com.app.juawcevada.rickspace.ui.characterlist.CharacterListViewState
 import com.app.juawcevada.rickspace.util.builder.character
-import com.app.juawcevada.rickspace.util.builder.episodes
 import com.app.juawcevada.rickspace.util.observeTest
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

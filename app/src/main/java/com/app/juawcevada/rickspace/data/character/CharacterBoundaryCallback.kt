@@ -6,8 +6,8 @@ import com.app.juawcevada.rickspace.data.shared.repository.Resource
 import com.app.juawcevada.rickspace.model.Character
 
 class CharacterBoundaryCallback(
-        private val characterRepository: CharacterRepository,
-        private val singleResourceLoader: SingleResourceLoader = SingleResourceLoader()
+    private val characterRepository: CharacterRepository,
+    private val singleResourceLoader: SingleResourceLoader = SingleResourceLoader()
 ) : PagedList.BoundaryCallback<Character>() {
 
     val networkState: LiveData<Resource<Unit>>

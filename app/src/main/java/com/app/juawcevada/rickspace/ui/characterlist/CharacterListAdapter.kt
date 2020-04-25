@@ -15,8 +15,8 @@ import com.app.juawcevada.rickspace.ui.shared.PagedRecyclerAdapter
 
 
 class CharacterListAdapter(
-        private val dataBindingComponent: DataBindingComponent,
-        private val onCharacterSelected: (Character) -> Unit
+    private val dataBindingComponent: DataBindingComponent,
+    private val onCharacterSelected: (Character) -> Unit
 ) : PagedRecyclerAdapter<Character, CharacterItemBinding>(CharacterDiff()) {
 
     private val onClickListener: View.OnClickListener = View.OnClickListener {

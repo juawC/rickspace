@@ -3,7 +3,11 @@ package com.app.juawcevada.rickspace.data.character
 import androidx.lifecycle.LiveData
 import com.app.juawcevada.rickspace.data.shared.repository.Resource
 import com.app.juawcevada.rickspace.util.builder.character
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doAnswer
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import org.junit.Test
 
 @Suppress("UNCHECKED_CAST")
@@ -32,7 +36,7 @@ class CharacterBoundaryCallbackTest {
 
 
     private fun createCharacterBoundaryCallBack(
-            characterRepository: CharacterRepository = mock()
+        characterRepository: CharacterRepository = mock()
     ): CharacterBoundaryCallback {
 
         val singleResourceLoader: SingleResourceLoader = mock {

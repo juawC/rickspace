@@ -1,18 +1,20 @@
 package com.app.juawcevada.rickspace.data.character
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.app.juawcevada.rickspace.data.shared.local.AppDatabase
 import com.app.juawcevada.rickspace.data.shared.remote.RickAndMortyService
-import com.app.juawcevada.rickspace.data.shared.repository.*
+import com.app.juawcevada.rickspace.data.shared.repository.Listing
+import com.app.juawcevada.rickspace.data.shared.repository.Resource
+import com.app.juawcevada.rickspace.data.shared.repository.ResourceError
+import com.app.juawcevada.rickspace.data.shared.repository.ResourceLoading
+import com.app.juawcevada.rickspace.data.shared.repository.ResourceSuccess
 import com.app.juawcevada.rickspace.dispatchers.AppDispatchers
 import com.app.juawcevada.rickspace.extensions.runInTransactionSuspended
 import com.app.juawcevada.rickspace.model.Character
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
 
 class CharacterRepository(

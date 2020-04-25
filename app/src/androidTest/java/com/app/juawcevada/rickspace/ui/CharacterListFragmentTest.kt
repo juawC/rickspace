@@ -6,25 +6,42 @@ import androidx.navigation.NavController
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.swipeDown
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.app.juawcevada.rickspace.R
+import com.app.juawcevada.rickspace.R.id.error_icon
+import com.app.juawcevada.rickspace.R.id.error_retry_button
+import com.app.juawcevada.rickspace.R.id.error_text_title
+import com.app.juawcevada.rickspace.R.id.list
+import com.app.juawcevada.rickspace.R.id.snackbar_text
+import com.app.juawcevada.rickspace.R.id.spin_kit
+import com.app.juawcevada.rickspace.R.id.swipe_to_refresh
 import com.app.juawcevada.rickspace.event.Event
 import com.app.juawcevada.rickspace.testing.SingleFragmentActivity
+import com.app.juawcevada.rickspace.ui.characterlist.CharacterListFragment
+import com.app.juawcevada.rickspace.ui.characterlist.CharacterListFragmentDirections
+import com.app.juawcevada.rickspace.ui.characterlist.CharacterListNavigationActions
+import com.app.juawcevada.rickspace.ui.characterlist.CharacterListViewModel
+import com.app.juawcevada.rickspace.ui.characterlist.CharacterListViewState
+import com.app.juawcevada.rickspace.ui.shared.FragmentBindingAdapters
+import com.app.juawcevada.rickspace.ui.shared.FragmentDataBindingComponent
 import com.app.juawcevada.rickspace.ui.shared.SnackbarMessage
+import com.app.juawcevada.rickspace.util.TestDataSourceFactory
+import com.app.juawcevada.rickspace.util.all
+import com.app.juawcevada.rickspace.util.builder.character
+import com.app.juawcevada.rickspace.util.checkThatMatches
+import com.app.juawcevada.rickspace.util.createTestFactory
+import com.app.juawcevada.rickspace.util.onRecyclerViewPosition
+import com.app.juawcevada.rickspace.util.perform
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import com.app.juawcevada.rickspace.R.id.*
-import com.app.juawcevada.rickspace.R
-import com.app.juawcevada.rickspace.ui.characterlist.*
-import com.app.juawcevada.rickspace.ui.shared.FragmentBindingAdapters
-import com.app.juawcevada.rickspace.ui.shared.FragmentDataBindingComponent
-import com.app.juawcevada.rickspace.util.*
-import com.app.juawcevada.rickspace.util.builder.character
-import com.nhaarman.mockitokotlin2.verify
 
 @RunWith(AndroidJUnit4::class)
 class CharacterListFragmentTest {
@@ -49,9 +66,9 @@ class CharacterListFragmentTest {
         fragment = CharacterListFragmentMockNavigation()
 
         characterListViewModel = mock {
-            on {viewState} doReturn this@CharacterListFragmentTest.viewState
-            on {errorMessage} doReturn this@CharacterListFragmentTest.errorMessage
-            on {navigationAction} doReturn this@CharacterListFragmentTest.navigationAction
+            on { viewState } doReturn this@CharacterListFragmentTest.viewState
+            on { errorMessage } doReturn this@CharacterListFragmentTest.errorMessage
+            on { navigationAction } doReturn this@CharacterListFragmentTest.navigationAction
         }
 
         fragment.viewModelFactory = characterListViewModel.createTestFactory()
@@ -184,7 +201,7 @@ class CharacterListFragmentTest {
 
         val characterPagedList = TestDataSourceFactory(charactersList).buildPagedList()
         viewState.value = CharacterListViewState(charactersList = characterPagedList)
-        errorMessage.value =  Event(SnackbarMessage(R.string.default_error_message))
+        errorMessage.value = Event(SnackbarMessage(R.string.default_error_message))
 
         snackbar_text checkThatMatches withText(R.string.default_error_message)
     }
@@ -195,7 +212,7 @@ class CharacterListFragmentTest {
         }
     }
 
-    class CharacterListFragmentMockNavigation: CharacterListFragment() {
+    class CharacterListFragmentMockNavigation : CharacterListFragment() {
         val navController = mock<NavController>()
         override fun navController() = navController
     }

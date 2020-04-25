@@ -5,7 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.paging.PagedList
 import com.app.juawcevada.rickspace.R
-import com.app.juawcevada.rickspace.data.shared.repository.*
+import com.app.juawcevada.rickspace.data.shared.repository.Listing
+import com.app.juawcevada.rickspace.data.shared.repository.Resource
+import com.app.juawcevada.rickspace.data.shared.repository.ResourceError
+import com.app.juawcevada.rickspace.data.shared.repository.ResourceLoading
+import com.app.juawcevada.rickspace.data.shared.repository.ResourceSuccess
 import com.app.juawcevada.rickspace.domain.character.GetCharactersUseCase
 import com.app.juawcevada.rickspace.domain.character.RefreshCharactersUseCase
 import com.app.juawcevada.rickspace.event.Event
@@ -199,7 +203,7 @@ class CharacterListViewModelTest {
         val characters = mutableListOf(character {})
         listingPagedList.value = characters.toPagedList()
         listingNetworkState.value = ResourceSuccess()
-        whenever(refreshUseCase.invoke(Unit)).thenReturn(flow<Resource<Unit>> { emit(ResourceError(error = NullPointerException()))})
+        whenever(refreshUseCase.invoke(Unit)).thenReturn(flow<Resource<Unit>> { emit(ResourceError(error = NullPointerException())) })
 
         viewModel.refresh()
 

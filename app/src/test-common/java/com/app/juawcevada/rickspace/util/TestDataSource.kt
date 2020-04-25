@@ -4,7 +4,7 @@ import androidx.paging.PositionalDataSource
 import com.app.juawcevada.rickspace.model.Character
 
 class TestDataSource(
-        private val charList: List<Character> = emptyList()
+    private val charList: List<Character> = emptyList()
 ) : PositionalDataSource<Character>() {
 
     override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<Character>) {

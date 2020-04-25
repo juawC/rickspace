@@ -12,14 +12,14 @@ import com.app.juawcevada.rickspace.ui.shared.SnackbarMessage
 import com.google.android.material.snackbar.Snackbar
 
 inline fun <reified VM : ViewModel> Fragment.viewModelProvider(
-        provider: ViewModelProvider.Factory
+    provider: ViewModelProvider.Factory
 ): VM {
     return ViewModelProvider(this, provider).get(VM::class.java)
 }
 
 fun Fragment.setUpSnackbar(
-        snackbarMessage: LiveData<Event<SnackbarMessage>>,
-        view: View
+    snackbarMessage: LiveData<Event<SnackbarMessage>>,
+    view: View
 ) {
     snackbarMessage.observe(this, EventObserver {
         Snackbar.make(view, it.messageId, it.duration).show()

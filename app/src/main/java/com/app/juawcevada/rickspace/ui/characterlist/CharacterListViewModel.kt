@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagedList
 import com.app.juawcevada.rickspace.R
 import com.app.juawcevada.rickspace.data.shared.repository.Resource
 import com.app.juawcevada.rickspace.data.shared.repository.ResourceError
@@ -13,9 +12,7 @@ import com.app.juawcevada.rickspace.domain.character.GetCharactersUseCase
 import com.app.juawcevada.rickspace.domain.character.RefreshCharactersUseCase
 import com.app.juawcevada.rickspace.domain.shared.invoke
 import com.app.juawcevada.rickspace.event.Event
-import com.app.juawcevada.rickspace.model.Character
 import com.app.juawcevada.rickspace.testing.OpenClassOnDebug
-import com.app.juawcevada.rickspace.ui.shared.ScopedViewModel
 import com.app.juawcevada.rickspace.ui.shared.SnackbarMessage
 import com.app.juawcevada.rickspace.ui.shared.ViewStateLiveData
 import kotlinx.coroutines.flow.collect

@@ -11,16 +11,16 @@ sealed class Resource<out Data>(open val data: Data?, open val error: Throwable?
 }
 
 data class ResourceError<out Data>(
-        override val data: Data? = null,
-        override val error: Throwable? = null
+    override val data: Data? = null,
+    override val error: Throwable? = null
 ) : Resource<Data>(data, error)
 
 data class ResourceSuccess<out Data>(
-        override val data: Data? = null
+    override val data: Data? = null
 ) : Resource<Data>(data, null)
 
 data class ResourceLoading<out Data>(
-        override val data: Data? = null
+    override val data: Data? = null
 ) : Resource<Data>(data, null)
 
 

@@ -9,7 +9,8 @@ import com.app.juawcevada.rickspace.testing.OpenClassOnDebug
  * Fragment view binders.
  */
 
-@OpenClassOnDebug class FragmentBindingAdapters(private val fragment: Fragment) {
+@OpenClassOnDebug
+class FragmentBindingAdapters(private val fragment: Fragment) {
 
     @BindingAdapter("imageUrl")
     fun bindImage(imageView: ImageView, url: String?) {

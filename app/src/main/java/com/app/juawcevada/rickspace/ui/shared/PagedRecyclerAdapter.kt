@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 abstract class PagedRecyclerAdapter<DataType, BindingType : ViewDataBinding>(
-        comparator: DiffUtil.ItemCallback<DataType>
+    comparator: DiffUtil.ItemCallback<DataType>
 ) : PagedListAdapter<DataType, PagedRecyclerAdapter.ViewHolder<BindingType>>(comparator) {
 
 
@@ -35,6 +35,6 @@ abstract class PagedRecyclerAdapter<DataType, BindingType : ViewDataBinding>(
     protected abstract fun createBinding(parent: ViewGroup): BindingType
 
     class ViewHolder<out BindingType : ViewDataBinding>(
-            val binding: BindingType
+        val binding: BindingType
     ) : RecyclerView.ViewHolder(binding.root)
 }

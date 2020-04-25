@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class RefreshCharactersUseCase @Inject constructor(
-        private val repository: CharacterRepository
+    private val repository: CharacterRepository
 ) : UseCase<Unit, Flow<Resource<Unit>>>() {
 
     override fun execute(
-            parameters: Unit
+        parameters: Unit
     ): Flow<Resource<Unit>> {
 
         return repository.refreshCharactersData()

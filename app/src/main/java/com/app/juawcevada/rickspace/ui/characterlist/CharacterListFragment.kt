@@ -14,7 +14,6 @@ import com.app.juawcevada.rickspace.event.EventObserver
 import com.app.juawcevada.rickspace.extensions.checkExhaustion
 import com.app.juawcevada.rickspace.extensions.lazyViewModelProvider
 import com.app.juawcevada.rickspace.extensions.setUpSnackbar
-import com.app.juawcevada.rickspace.extensions.viewModelProvider
 import com.app.juawcevada.rickspace.model.Character
 import com.app.juawcevada.rickspace.testing.OpenClassOnDebug
 import com.app.juawcevada.rickspace.ui.shared.FragmentDataBindingComponent

@@ -42,6 +42,6 @@ abstract class ListRecyclerAdapter<DataType, BindingType : ViewDataBinding>
     protected abstract fun createBinding(parent: ViewGroup): BindingType
 
     class ViewHolder<out DataType : ViewDataBinding>(
-            val binding: DataType
+        val binding: DataType
     ) : RecyclerView.ViewHolder(binding.root)
 }

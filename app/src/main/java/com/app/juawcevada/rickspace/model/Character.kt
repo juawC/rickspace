@@ -9,18 +9,18 @@ import com.squareup.moshi.JsonClass
 @Entity
 @JsonClass(generateAdapter = true)
 data class Character(
-        @PrimaryKey
-        val id: Long,
-        val name: String,
-        val status: String,
-        val species: String,
-        val type: String,
-        val gender: String,
-        @Embedded val origin: Origin,
-        @Embedded val location: Location,
-        val image: String,
-        val episode: List<String>,
-        val url: String
+    @PrimaryKey
+    val id: Long,
+    val name: String,
+    val status: String,
+    val species: String,
+    val type: String,
+    val gender: String,
+    @Embedded val origin: Origin,
+    @Embedded val location: Location,
+    val image: String,
+    val episode: List<String>,
+    val url: String
 ) {
     // to be consistent w/ changing backend order, we need to keep a data like this
     var indexInResponse: Int = -1

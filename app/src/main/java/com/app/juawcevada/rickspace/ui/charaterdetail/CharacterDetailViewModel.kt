@@ -20,7 +20,7 @@ class CharacterDetailViewModel @AssistedInject constructor(
         }
     }
     val viewState: LiveData<CharacterDetailViewState>
-    get() = _viewState
+        get() = _viewState
 
     @AssistedInject.Factory
     interface Factory {

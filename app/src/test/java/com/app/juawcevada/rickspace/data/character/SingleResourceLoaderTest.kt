@@ -73,7 +73,7 @@ class SingleResourceLoaderTest {
         }
 
         inOrder(currentStateObserver) {
-            verify(currentStateObserver,times(1)).onChanged(ResourceLoading())
+            verify(currentStateObserver, times(1)).onChanged(ResourceLoading())
         }
     }
 

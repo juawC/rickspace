@@ -15,7 +15,14 @@ import com.app.juawcevada.rickspace.util.TestCoroutineRule
 import com.app.juawcevada.rickspace.util.TestDataSourceFactory
 import com.app.juawcevada.rickspace.util.builder.character
 import com.app.juawcevada.rickspace.util.builder.characterListInfo
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doAnswer
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.doThrow
+import com.nhaarman.mockitokotlin2.inOrder
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import okhttp3.internal.http.RealResponseBody

@@ -4,15 +4,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="episodeUrl"
             type="String" />
     </data>
-<TextView android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:text="Episode 1"
-    app:setEpisodeName="@{episodeUrl}"
-    android:padding="4dp"
-    android:layout_marginStart="8dp"
-    android:textAppearance="@style/TextAppearance.List.Body" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Episode 1"
+        app:setEpisodeName="@{episodeUrl}"
+        android:padding="4dp"
+        android:layout_marginStart="8dp"
+        android:textAppearance="@style/TextAppearance.List.Body" />
 </layout>
